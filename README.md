@@ -464,14 +464,41 @@ the_title('<h1>','</h1>');
 
 ## Archive tags
 
-Listings
+Pour les listings.
 
 - single_post_title(), outside of the loop
 - post_type_archive()
 - single_cat_title()
 - single_tag_title()
 - single_term_title()
-- 
+- **wp_get_archives()** : très utile pour faire des listings par date, par postype très facilement (pareil que le widget, editable par l'user)
+
+Par exemple, créer une liste de liens de poste projets par année, 3 max en affichant le nombre de posts par année
+~~~php
+<?php
+$args = array(
+	'type'            => 'yearly',
+	'limit'           => 3,
+	'show_post_count' => true,
+	'post_type'       => 'projet',
+);
+wp_get_archives( $args );
+?>
+~~~
+
+## Calendar tags
+
+- **get_calendar()** (pareil que le widget, editable par l'user)
+- calendar_week_mod()
+- delete_get_calendar_cache()
+
+## Misc tags
+
+- wp_meta()
+- get_current_blog_id() (pour le multisites)
+- wp_title (deprecated, auto display a present)
+- allowed_tags()
+- wp_enqueue_scripts()
 
 ## Ressources
 
