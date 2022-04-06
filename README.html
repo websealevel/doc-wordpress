@@ -1,0 +1,328 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style type="text/css">
+td, th { border: 1px solid #c3c3c3; padding: 0 3px 0 3px; }
+table { border-collapse: collapse; }
+img { max-width: 100%; }
+</style>
+<meta name="generator" content="ReText 7.2.1">
+<title>README</title>
+<style type="text/css">
+</style>
+</head>
+<body>
+<h1 id="doc-wordpress">doc-wordpress</h1>
+<div class="toc">
+<ul>
+<li><a href="#doc-wordpress">doc-wordpress</a><ul>
+<li><a href="#abreviations">Abréviations</a></li>
+<li><a href="#must-used-plugins">Must used plugins</a></li>
+<li><a href="#cptcustom-post-types-et-ct-custom-taxonomies">CPT(Custom Post Types) et CT (Custom Taxonomies)</a></li>
+<li><a href="#template-hierarchy">Template hierarchy</a><ul>
+<li><a href="#indexphp">index.php</a></li>
+<li><a href="#singularphp">singular.php</a></li>
+<li><a href="#singlephp">single.php</a></li>
+<li><a href="#single-postphp">single-post.php</a></li>
+<li><a href="#single-posttypephp">single-{posttype}.php</a></li>
+<li><a href="#homephp">home.php</a></li>
+<li><a href="#archivephp">archive.php</a></li>
+<li><a href="#categoryphp">category.php</a></li>
+<li><a href="#attachmentphp">attachment.php</a></li>
+<li><a href="#mimetypephp">${mimetype}.php</a></li>
+<li><a href="#pagephp">page.php</a></li>
+<li><a href="#customphp">${custom}.php</a></li>
+<li><a href="#404php">404.php</a></li>
+<li><a href="#searchphp">search.php</a></li>
+<li><a href="#archive-posttypephp">archive-${posttype}.php</a></li>
+<li><a href="#commentaires">Commentaires</a></li>
+</ul>
+</li>
+<li><a href="#template-parts">template-parts</a></li>
+<li><a href="#post-formats">Post formats</a><ul>
+<li><a href="#usage">Usage</a></li>
+</ul>
+</li>
+<li><a href="#ressources">Ressources</a><ul>
+<li><a href="#livres">Livres</a></li>
+<li><a href="#podcasts">Podcasts</a></li>
+<li><a href="#doc-officielle">Doc officielle</a></li>
+<li><a href="#developpement-de-themes">Développement de thèmes</a></li>
+<li><a href="#developpement-de-plugin">Développement de plugin</a></li>
+<li><a href="#formations">Formations</a><ul>
+<li><a href="#gratuit">Gratuit</a></li>
+<li><a href="#payant">Payant</a><ul>
+<li><a href="#les-bases">les bases</a></li>
+<li><a href="#les-bases-a-avance-hyper-complet">les bases à avancé (hyper complet)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="abreviations">Abréviations</h2>
+<ul>
+<li>CPT: Custom Post Type</li>
+<li>CT : Custom Taxonomy</li>
+</ul>
+<h2 id="must-used-plugins">Must used plugins</h2>
+<p>Dans le dossier <code>wp-content/mu-plugins</code></p>
+<ul>
+<li>toujours actifs</li>
+<li>utilisateurs ne peuvent pas les désactiver par accident</li>
+<li>chargés avant les plugins normaux</li>
+</ul>
+<p>Problèmes</p>
+<ul>
+<li>ils n'apparaissent pas les notifs de mise a jour. C'est à nous de penser à les update</li>
+<li>les hooks d'activation et de desactivation ne sont pas executés pour les must used plugins</li>
+</ul>
+<p>En gros, <em>à utiliser avec parcimonie</em>. Il vaut mieux y mettre des plugins qui bougent pas trop, autonomes et isolés, surtout pour monitorer le site je dirai.</p>
+<h2 id="cptcustom-post-types-et-ct-custom-taxonomies">CPT(Custom Post Types) et CT (Custom Taxonomies)</h2>
+<p>Les CPT et CT <strong>sont de préférence déclarés dans un plugin</strong>. Je préfère les mettre dans <strong><code>mu-plugins</code></strong> pour être sûr qu'ils ne soient pas désactivés par erreur par l'admin.</p>
+<h2 id="template-hierarchy">Template hierarchy</h2>
+<p><strong>Hyper important !</strong></p>
+<p>La <a href="https://developer.wordpress.org/themes/basics/template-hierarchy/">hierarchie</a> des templates wordpress, et leur fallbacks (quel template est appelé si celui demandé n'est pas trouvé).</p>
+<ul>
+<li><a href="https://developer.wordpress.org/files/2014/10/Screenshot-2019-01-23-00.20.04.png">Visualisation</a></li>
+<li><a href="https://wphierarchy.com/">Visualisation interactive</a></li>
+</ul>
+<p>Pour le lire, a gauche c'est <em>l'input</em>, par la qu'arrive la requete en fonction de l'url (modèle MVC). C'est la couleur gris foncé sur le diagramme. Et on descend vers la droite jusqu'à trouver le bon template. Jusqu'a <code>index.php</code> si on en trouve aucun.</p>
+<p>J'appelle <code>front</code> tout template qui se trouve en première ligne de la requête. Ces templates ne sont les fallbacks d'aucun autre template, ils sont en première ligne.</p>
+<h3 id="indexphp">index.php</h3>
+<ul>
+<li>sert de fallback à : tout</li>
+<li>fallback : aucun</li>
+</ul>
+<h3 id="singularphp">singular.php</h3>
+<p>Pas toujours nécessaire, peut-être redondant avec index.php.</p>
+<p>Pour un single post, page, single attachment. <em>Utile si un post ou une page ont le même template</em> (car sert de fallback aux deux)</p>
+<p>Les archives n'utilisent pas singular.php</p>
+<ul>
+<li>sert de fallback à : page, single, attachment</li>
+<li>fallback : <a href="#index.php">index.php</a></li>
+</ul>
+<h3 id="singlephp">single.php</h3>
+<p>Template important. pour afficher <strong>un seul <code>post</code> ou CPT</strong>.</p>
+<ul>
+<li>sert de fallback à : <code>attachment</code>, <code>single-post</code>, <code>single-${posttype}</code></li>
+<li>fallback : <a href="#singular.php">singular.php</a></li>
+</ul>
+<h3 id="single-postphp">single-post.php</h3>
+<p>Même que single, mais seulement pour le post par défaut de wordpress (pas de CPT)
+Template pour afficher <strong>un seul <code>post</code></strong>.</p>
+<ul>
+<li>sert de fallback à : </li>
+<li>fallback : <a href="#single.php">single.php</a></li>
+</ul>
+<h3 id="single-posttypephp">single-{posttype}.php</h3>
+<p>Même que single, mais seulement pour le CPT posttype. Template pour afficher <em>un seul <code>post</code></em>.</p>
+<ul>
+<li>sert de fallback à : <code>single-${posttype}-${slug}</code></li>
+<li>fallback : <a href="#single.php">single</a></li>
+</ul>
+<h3 id="homephp">home.php</h3>
+<ul>
+<li>si on choisit pour la front page 'Your latest posts' on utilise <code>home.php</code></li>
+<li>toujours pas la page listant tous les posts (<code>mon-site/blog</code>), soit pour la page 'Posts page'.</li>
+</ul>
+<p>En gros c'est pas compliqué : par défaut Wordpress nous met en home la liste des posts (<code>/</code> est pareil que <code>/blog</code>). Dans ce cas c'est <code>home.php</code> qui est appelée. Si on choisit de mettre une page static à la place, il faut aussi choisir une page pour la liste des posts. Et c'est toujours <code>home.php</code> qui s'en charge.</p>
+<ul>
+<li>sert de fallback à : front-page </li>
+<li>fallback : <a href="#index.php">index</a></li>
+</ul>
+<h3 id="archivephp">archive.php</h3>
+<p>Une archive est une collection d'un type de données.
+Catégorie archive, tag archive, author archive, CPT archive etc. Assez générique.</p>
+<p>Trop générique.</p>
+<ul>
+<li>sert de fallback à : </li>
+<li>fallback : <a href="#index.php">index</a></li>
+</ul>
+<h3 id="categoryphp">category.php</h3>
+<p>Une archive pour la catégorie Catégorie (catégorie built in)</p>
+<ul>
+<li>sert de fallback à : aucun (front)</li>
+<li>fallback : <a href="#archive.php">archive</a></li>
+</ul>
+<h3 id="attachmentphp">attachment.php</h3>
+<p><em>Attachment</em> se traduit par <em>fichier joint</em>.</p>
+<p>Tout ce qui est attaché à un post depuis le dossier <code>medias</code> (image, video, PDF etc..). C'est un type de post fondamentalement.</p>
+<ul>
+<li>sert de fallback à : mimetype</li>
+<li>fallback : <a href="#single.php">single</a></li>
+</ul>
+<h3 id="mimetypephp">${mimetype}.php</h3>
+<p>Template pour un type de donnée spécifique (image, vidéo, PDF). Par exemple</p>
+<ul>
+<li>text.php pour le texte</li>
+<li>video.php pour un attachment video</li>
+<li>
+<p>image.php pour un attachment image</p>
+</li>
+<li>
+<p>sert de fallback à : ${subtype}</p>
+</li>
+<li>fallback : <a href="#attachment.php">attachment</a></li>
+</ul>
+<h3 id="pagephp">page.php</h3>
+<p>Controle les pages statiques (les posts de type page)</p>
+<ul>
+<li>sert de fallback à : page-${slug}</li>
+<li>fallback : <a href="#singular.php">singular</a></li>
+</ul>
+<h3 id="customphp">${custom}.php</h3>
+<p>Peut être utile pour tout <em>post</em> (post, page, CPT). Ne sera pas pris en compte par la hierarchie par défaut.</p>
+<p>Il faut rajouter dans le header de la page (tout en haut)</p>
+<pre><code class="language-php">&lt;?php
+// Template Name: Ma page
+?&gt;
+</code></pre>
+<p>Wordpress va scanner ce header, et va le rendre accessible via l'admin. </p>
+<p>Pour rendre un template custom utilisable pour un post, une page et un CPT on peut aussi mettre</p>
+<pre><code class="language-php">&lt;?php
+// Template Name: Ma page
+// Template Post Type: post, page, custom-post-type
+?&gt;
+</code></pre>
+<p>Il faut ensuite dire à la page ou au post explicitement d'utiliser ce template au lieu du template par défaut envoyé par la hierarchie.</p>
+<ul>
+<li>sert de fallback à : aucun (front)</li>
+<li>fallback : <a href="#singular.php">singular</a></li>
+</ul>
+<h3 id="404php">404.php</h3>
+<p>Rendre ludique le fait d'avoir échoué à trouver une ressource. Et redemander à l'user ce qu'il cherchait.</p>
+<p>On peut afficher un formulaire de recherche</p>
+<pre><code class="language-php">echo get_search_form();
+</code></pre>
+<h3 id="searchphp">search.php</h3>
+<p>La recherche sur Wordpress par défaut a pour forme <code>{domain}/?s=motRecherche</code>. Template utilisé si le paramètre s est présent dans la query string.</p>
+<ul>
+<li>sert de fallback à : aucun (front). </li>
+<li>fallback : <a href="#index.php">index</a></li>
+</ul>
+<h3 id="archive-posttypephp">archive-${posttype}.php</h3>
+<p><strong>Il faut s'assurer à la registration que le CPT a bien <code>has_archive</code> à <code>true</code></strong>, sinon la hierarchie retombera sur <code>archive</code>.</p>
+<pre><code class="language-php">function mondomaine_register_cpt_monposttype() {
+    /**
+     * Post Type: mon-posttype.
+     */
+    $labels = array(
+        ...
+    );
+
+    $args = array(
+        ...
+        'has_archive'           =&gt; true,
+        ...
+    );
+
+    register_post_type( 'mon-posttype', $args );
+}
+
+add_action( 'init', 'mondomaine_register_cpt_monposttype' );
+
+</code></pre>
+<ul>
+<li>sert de fallback à : aucun (front). </li>
+<li>fallback : <a href="#archive.php">archive</a></li>
+</ul>
+<h3 id="commentaires">Commentaires</h3>
+<ul>
+<li>ne jamais utiliser ${id} comme template ! Sauf en cas de force majeure. Trop dépendant de la bdd et peu explicite</li>
+</ul>
+<h2 id="template-parts">template-parts</h2>
+<p>On crée en général un dossier <code>template-parts</code> à la racine du thème. On y stocke tout template html de contenu. Par exemple</p>
+<ul>
+<li><code>template-parts/content.php</code> pour le contenu d'un post</li>
+<li><code>template-parts/content-page.php</code> pour le contenu d'une page</li>
+<li>etc...</li>
+</ul>
+<p>Par exemple, le contenu de <code>content.php</code></p>
+<pre><code class="language-html">&lt;?php 
+/**
+ * Contenu d'un post
+ */
+?&gt;
+&lt;article id=&quot;post-&lt;?php the_ID(); ?&gt;&quot; &lt;?php post_class(); ?&gt;&gt;
+    &lt;header class=&quot;entry-header&quot;&gt;
+        &lt;?php the_title('&lt;h1&gt;', '&lt;/h1&gt;'); ?&gt;
+    &lt;/header&gt;
+    &lt;div class=&quot;entry-content&quot;&gt;
+        &lt;?php the_content(); ?&gt;
+    &lt;/div&gt;
+&lt;/article&gt;
+</code></pre>
+<p>On l'appelle ensuite avec la fonction <code>get_template_part({path du fichier content},{ce qui suit le -}</code> dans la main loop. Par exemple</p>
+<pre><code class="language-php">&lt;?php if (have_posts()) : while (have_posts()) : the_post(); ?&gt;
+            &lt;?php get_template_part('template-parts/content','page') ?&gt;
+        &lt;?php endwhile; else : ?&gt;
+            &lt;?php get_template_part('template-parts/content', 'none') ?&gt;
+&lt;?php endif; ?&gt;
+</code></pre>
+<h2 id="post-formats"><a href="https://wordpress.org/support/article/post-formats/">Post formats</a></h2>
+<p>Pour présenter différents types de posts de manière différente. Les formats sont des sortes de métadonnées sur les posts. Par défaut un post a le format <code>standard</code>. Utile pour utiliser des template-parts en fonction d'une méta (ex: vidéo, comment etc...)</p>
+<p>Les noms des formats match les noms des dashicons.</p>
+<h3 id="usage">Usage</h3>
+<pre><code class="language-php">if ( has_post_format( 'video' )) {
+  echo 'this is the video format';
+}
+</code></pre>
+<pre><code class="language-php">echo get_post_format($post_id);
+</code></pre>
+<p>Les post-formats ont un <a href="https://developer.wordpress.org/themes/basics/template-hierarchy/#custom-taxonomies">template dans la hierarchie</a> du type <code>taxonomy-post_format-post-format-{format}.php</code>.</p>
+<p>Mais à utiliser <em>davantage pour le style que pour du templating</em>. On peut par exemple définir un <code>content-{format}.php</code> dans nos <code>template-parts</code> et charger un template différent en fonction du format.</p>
+<p>A utiliser pour le format <code>quote</code> pour les <code>testimonials</code> par exemple, au lieu d'un CPT !</p>
+<h2 id="ressources">Ressources</h2>
+<h3 id="livres">Livres</h3>
+<ul>
+<li><em>Professional WordPress: Design and Development</em> de Brad Williams et David Damstra, Edition Wrox, 3rd Edition (27 janvier 2015)</li>
+</ul>
+<h3 id="podcasts">Podcasts</h3>
+<ul>
+<li>https://phproundtable.com/episode/all-things-wordpress</li>
+<li>https://podcast.htmlallthethings.com/e/the-thing-about-wordpress/</li>
+</ul>
+<h3 id="doc-officielle">Doc officielle</h3>
+<ul>
+<li><a href="https://codex.wordpress.org/">Codex</a></li>
+<li><a href="https://developer.wordpress.org/themes/basics/template-hierarchy/">Wordpress hierarchy</a></li>
+<li><a href="https://developer.wordpress.org/coding-standards/wordpress-coding-standards/">Wordpress coding standards</a></li>
+<li></li>
+</ul>
+<h3 id="developpement-de-themes">Développement de thèmes</h3>
+<ul>
+<li><a href="https://underscores.me/">Underscores</a></li>
+</ul>
+<h3 id="developpement-de-plugin">Développement de plugin</h3>
+<ul>
+<li><a href="https://pluginplate.com/plugin-boilerplate/">Plugingplate</a> : starterpack</li>
+<li><a href="https://developer.wordpress.org/plugins/intro/">Introduction</a></li>
+</ul>
+<h3 id="formations">Formations</h3>
+<ul>
+<li><a href="https://zacgordon.com/">Zack Gordon (le daron)</a></li>
+</ul>
+<h4 id="gratuit">Gratuit</h4>
+<ul>
+<li><a href="https://learn.wordpress.org/courses">Cours wordpress.org</a></li>
+</ul>
+<h4 id="payant">Payant</h4>
+<h5 id="les-bases">les bases</h5>
+<ul>
+<li><a href="https://www.udemy.com/course/become-a-wordpress-developer-php-javascript/">Become a WordPress Developer: Unlocking Power With Code</a>, pas mal pour apprendre le processus de la création de thème dans son ensemble</li>
+</ul>
+<h5 id="les-bases-a-avance-hyper-complet">les bases à avancé (hyper complet)</h5>
+<ul>
+<li><a href="https://www.udemy.com/course/wordpress-theme-and-plugin-development-course">Complete WordPress Theme &amp; Plugin Development Course [2021]</a> </li>
+<li><a href="https://www.udemy.com/course/wordpress-rest-api-course/">WordPress REST API Complete Beginners Guide</a></li>
+<li><a href="https://www.udemy.com/course/gutenberg-block-development-wordpress-javascript-course/">Gutenberg Block Development for WordPress</a></li>
+</ul>
+
+</body>
+</html>
