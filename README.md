@@ -144,6 +144,14 @@ En gros c'est pas compliqué : par défaut Wordpress nous met en home la liste d
 - sert de fallback à : front-page 
 - fallback : [index](#index.php)
 
+## front-page.php
+
+Voir [ici](https://developer.wordpress.org/themes/basics/template-hierarchy/#front-page-display) l'explication détaillée
+
+- sert de fallback à : aucun (front)
+- fallback : [custom](#custom) si existe, sinon `page-${slug}` jusqu'à `page`.
+
+
 ### archive.php
 
 Une archive est une collection d'un type de données.
