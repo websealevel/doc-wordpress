@@ -1,6 +1,63 @@
 # doc-wordpress
 
 [TOC]
+- [doc-wordpress](#doc-wordpress)
+	- [Abréviations](#abréviations)
+	- [Must used plugins](#must-used-plugins)
+	- [CPT(Custom Post Types) et CT (Custom Taxonomies)](#cptcustom-post-types-et-ct-custom-taxonomies)
+	- [Template hierarchy](#template-hierarchy)
+		- [index.php](#indexphp)
+		- [singular.php](#singularphp)
+		- [single.php](#singlephp)
+		- [single-post.php](#single-postphp)
+		- [single-{posttype}.php](#single-posttypephp)
+		- [home.php](#homephp)
+		- [archive.php](#archivephp)
+		- [category.php](#categoryphp)
+		- [attachment.php](#attachmentphp)
+		- [${mimetype}.php](#mimetypephp)
+		- [page.php](#pagephp)
+		- [${custom}.php](#customphp)
+		- [404.php](#404php)
+		- [search.php](#searchphp)
+		- [archive-${posttype}.php](#archive-posttypephp)
+		- [single-${posttype}.php](#single-posttypephp-1)
+		- [taxonomy.php](#taxonomyphp)
+		- [taxonomy-${taxonomy}.php](#taxonomy-taxonomyphp)
+		- [Commentaires](#commentaires)
+	- [Taxonomies](#taxonomies)
+		- [Introduction](#introduction)
+		- [Taxonomy hierarchy](#taxonomy-hierarchy)
+		- [Taxonomy custom](#taxonomy-custom)
+		- [Divers](#divers)
+	- [template-parts](#template-parts)
+	- [Post formats](#post-formats)
+		- [Usage](#usage)
+	- [Escaping output](#escaping-output)
+		- [Sécurité](#sécurité)
+		- [Avec localization](#avec-localization)
+	- [Javascript dependencies](#javascript-dependencies)
+		- [Jquery](#jquery)
+	- [Template tags](#template-tags)
+	- [Include tags](#include-tags)
+	- [Login tags](#login-tags)
+	- [Bloginfo tags](#bloginfo-tags)
+	- [Archive tags](#archive-tags)
+	- [Calendar tags](#calendar-tags)
+	- [Misc tags](#misc-tags)
+	- [Ressources](#ressources)
+		- [Doc officielle](#doc-officielle)
+		- [Articles](#articles)
+			- [Taxonomies](#taxonomies-1)
+		- [Livres](#livres)
+		- [Podcasts](#podcasts)
+		- [Développement de thèmes](#développement-de-thèmes)
+		- [Développement de plugin](#développement-de-plugin)
+		- [Formations](#formations)
+			- [Gratuit](#gratuit)
+			- [Payant](#payant)
+				- [les bases](#les-bases)
+				- [les bases à avancé (hyper complet)](#les-bases-à-avancé-hyper-complet)
 
 ## Abréviations
 
@@ -431,7 +488,7 @@ jQuery('.single-projet)
 
 ## Template tags
 
-Les `template tags` sont des fonctions spéciales de wordpress qui permettent d'accéder au contenu/données wordpress (par ex `get_the_title()`, `the_title()`) . Elles passent aussi par des filtres (hook filter) `add_filter('the_title', callback)`.
+Les [`template tags`] sont des fonctions spéciales de wordpress qui permettent d'accéder au contenu/données wordpress (par ex `get_the_title()`, `the_title()`) . Elles passent aussi par des filtres (hook filter) `add_filter('the_title', callback)`.
 
 La plupart de ces fonctions acceptent des paramètres.
 
