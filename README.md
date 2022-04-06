@@ -217,12 +217,104 @@ add_action( 'init', 'mondomaine_register_cpt_monposttype' );
 Template pour servir un simple CPT.
 
 - sert de fallback à : `single-${posttype}-${slug}` pour personalise la vue à un CPT en particulier, puis `custom` s'il match 
-- fallback : [single](#archive.php)
+- fallback : [single](#single.php)
+
+### taxonomy.php
+
+Les template de taxonomy vont être par essence des templates de listing (archives).
+
+Template pour liste de tous les items de toutes les CT
+
+- sert de fallback à : `taxonomy-${taxonomy}-${term}` (template spécifique à un terme) puis `taxonomy-${taxonomy}`
+- fallback : [archive](#archive.php)
+
+### taxonomy-${taxonomy}.php
+
+Template pour liste de tous les items d'une CT.
+
+- sert de fallback à : `taxonomy-${taxonomy}-${term}`
+- fallback : [taxonomy](#taxonomy.php)
 
 ### Commentaires
 
 - ne jamais utiliser ${id} comme template ! Sauf en cas de force majeure. Trop dépendant de la bdd et peu explicite
 
+
+
+## Taxonomies
+
+### Introduction
+
+Les taxonomies sont des catégories qui permettent de regrouper les posts et de créer des liens entre eux.
+
+Par défaut, un post standard aura accès à deux types de taxonomy (builtin wp) `Categories` (hierarchical cad que les *terms peuvent avoir aussi des enfants*) and `Tags`(non hierarchical cad que *les terms ne peuvent pas avoir d'enfants*).
+
+Ces deux taxos sont incluses dans Wordpress par défaut. Mais on peut les supprimer si on veut. Y'en a 4 en tout si on compte les `Link Categories` (catégorie pour les liens) et les `Post_Format Categories` (pour les types de post en fonction de leur mimetype).
+
+Les taxonomies sont les parents, les `terms` sont les enfants.
+
+### Taxonomy hierarchy
+
+A lire du haut vers le bas pour voir le flow du templating. Valable pour les taxonomies par défaut (voir la hierarchie général des templates)
+
+~~~
+- taxonomy-{taxonomy}-{term}.php
+- taxonomy-{taxonomy}.php
+- tag-{slug}.php
+- tag-{id}.php
+- category-{slug}.php
+- category-{ID}.php
+~~~
+
+Si on l'applique à la taxonomy `Categories` (slug `category`)
+
+~~~
+- category-{slug}.php
+- category-{id}.php
+- category.php
+- archive.php
+- index.php
+~~~
+
+Si on l'applique à la taxonomy `tags` (slug `tag`)
+
+~~~
+- tag-{slug}.php
+- tag-{id}.php
+- tag.php
+- archive.php
+- index.php
+~~~
+
+### Taxonomy custom
+
+On peut créer nos propres taxonomies avec `register_taxonomy( '${slug taxonomy}', array( 'posttype' ), $args )`.
+
+Si on applique la hierarchie à la taxonomy custom 
+
+~~~
+- taxonomy-{taxonomy}-{term}.php
+- taxonomy-{taxonomy}.php
+- taxonomy.php
+- archive.php
+- index.php
+~~~
+
+
+### Divers
+
+- `hierarchical` : 
+    - `true`, traite la taxo comme une catégorie (liste d'items prédéfinis),
+    - `false` traite la taxo comme un tag. On rentre des termes séparés par des virgules sur chaque post à la volée. Si l'on ne souhaite pas avoir une taxonomie hierarchique et que l'on désire quand même avoir les checkboxs (c'est quand même plus cool) on peut utiliser le paramètre 
+
+~~~php
+$args = array(
+		'hierarchical'      => false,
+		// utilise les metabox de post comme pour la taxonomy hierarchique 'category'
+		'meta_box_cb'       => 'post_categories_meta_box',
+	);
+register_taxonomy( 'action', array( 'projet' ), $args );
+~~~
 
 ## template-parts
 
