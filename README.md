@@ -305,7 +305,9 @@ Si on applique la hierarchie à la taxonomy custom
 
 - `hierarchical` : 
     - `true`, traite la taxo comme une catégorie (liste d'items prédéfinis),
-    - `false` traite la taxo comme un tag. On rentre des termes séparés par des virgules sur chaque post à la volée. Si l'on ne souhaite pas avoir une taxonomie hierarchique et que l'on désire quand même avoir les checkboxs (c'est quand même plus cool) on peut utiliser le paramètre 
+    - `false` traite la taxo comme un tag. On rentre des termes séparés par des virgules sur chaque post à la volée. 
+
+Si l'on ne souhaite pas avoir une taxonomie hierarchique et que l'on désire quand même avoir les checkboxs (c'est quand même plus cool) on peut utiliser le paramètre `meta_box_cb`
 
 ~~~php
 $args = array(
@@ -399,7 +401,92 @@ esc_html_e( 'Hello World', 'text_domain' );
 echo esc_html( __( 'Hello World', 'text_domain' ) );
 ~~~
 
+
+## Javascript dependencies
+
+Si on regarde la page du codex de la fonction [wp_enqueue_scripts](https://developer.wordpress.org/reference/functions/wp_enqueue_script/#default-scripts-and-js-libraries-included-and-registered-by-wordpress) on peut voir toutes les dépendences JS du coeur de Wordpress (utilisé côté admin). 
+
+Si on a besoin de l'une de ces librairies **on a pas besoin de les importer explicitement dans notre projet**. Il suffit de copier leur slug dans le tableau `$deps` passé en argument de `wp_enqueue_scripts`.
+
+### Jquery
+
+Si on veut par exemple embarquer `jquery` sur nos pages webs servies au client 
+
+~~~php
+wp_enqueue_script( 'main-script', get_stylesheet_directory_uri() . '/js/scripts.min.js', array( 'jquery' ), $js_version, true );
+~~~
+
+Dans notre fichier `main-script.js` si on veut utiliser jquery, **il ne faut pas utiliser le signe $ car il peut rentrer en conflit avec d'autres library**.
+
+Donc au lieu d'écrire
+~~~javascript
+$('.single-projet)
+~~~
+
+on écrira
+
+~~~javascript
+jQuery('.single-projet)
+~~~
+
+## Template tags
+
+Les `template tags` sont des fonctions spéciales de wordpress qui permettent d'accéder au contenu/données wordpress (par ex `get_the_title()`, `the_title()`) . Elles passent aussi par des filtres (hook filter) `add_filter('the_title', callback)`.
+
+La plupart de ces fonctions acceptent des paramètres.
+
+~~~php
+the_title('<h1>','</h1>');
+~~~
+
+## Include tags
+
+- get_header()
+- get_footer()
+- get_sidebar()
+- get_template_part()
+- get_search_form()
+- comments_template()
+
+## Login tags
+
+- wp_loginout() : pour fair un bouton de connexion/deconnexion facilement. Si on veut être redirigé vers la même page où est présent le bouton on peut faire `<?php wp_loginout( get_permalink() ?>`. La fonction prend en argument une url pour le `redirect` après login ou logout.
+- wp_logout_url()
+- wp_login_url()
+- wp_login_form()
+- wp_lostpassword_url()
+- wp_register()
+- is_user_logged_in()
+
+## Bloginfo tags
+
+- bloginfo(), voir tous les paramètres
+
+## Archive tags
+
+Listings
+
+- single_post_title(), outside of the loop
+- post_type_archive()
+- single_cat_title()
+- single_tag_title()
+- single_term_title()
+- 
+
 ## Ressources
+
+### Doc officielle
+
+- [Codex](https://codex.wordpress.org/)
+- [Wordpress hierarchy](https://developer.wordpress.org/themes/basics/template-hierarchy/)
+- [Wordpress coding standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/)
+- [Template tags](https://codex.wordpress.org/Template_Tags)
+
+### Articles
+
+#### Taxonomies
+
+- [WordPress Taxonomies: The Ultimate Guide](https://ithemes.com/blog/wordpress-taxonomies)
 
 ### Livres
 
@@ -410,11 +497,7 @@ echo esc_html( __( 'Hello World', 'text_domain' ) );
 - https://phproundtable.com/episode/all-things-wordpress
 - https://podcast.htmlallthethings.com/e/the-thing-about-wordpress/
 
-### Doc officielle
 
-- [Codex](https://codex.wordpress.org/)
-- [Wordpress hierarchy](https://developer.wordpress.org/themes/basics/template-hierarchy/)
-- [Wordpress coding standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/)
 - 
 ### Développement de thèmes
 
