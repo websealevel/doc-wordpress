@@ -1,40 +1,6 @@
 # doc-wordpress
 
-- [doc-wordpress](#doc-wordpress)
-  - [Abréviations](#abréviations)
-  - [Must used plugins](#must-used-plugins)
-  - [CPT(Custom Post Types) et CT (Custom Taxonomies)](#cptcustom-post-types-et-ct-custom-taxonomies)
-  - [Template hierarchy](#template-hierarchy)
-    - [index.php](#indexphp)
-    - [singular.php](#singularphp)
-    - [single.php](#singlephp)
-    - [single-post.php](#single-postphp)
-    - [single-{posttype}.php](#single-posttypephp)
-    - [home.php](#homephp)
-    - [archive.php](#archivephp)
-    - [category.php](#categoryphp)
-    - [attachment.php](#attachmentphp)
-    - [${mimetype}.php](#mimetypephp)
-    - [page.php](#pagephp)
-    - [${custom}.php](#customphp)
-    - [404.php](#404php)
-    - [search.php](#searchphp)
-    - [archive-${posttype}.php](#archive-posttypephp)
-    - [Commentaires](#commentaires)
-  - [template-parts](#template-parts)
-  - [Post formats](#post-formats)
-    - [Usage](#usage)
-  - [Ressources](#ressources)
-    - [Livres](#livres)
-    - [Podcasts](#podcasts)
-    - [Doc officielle](#doc-officielle)
-    - [Développement de thèmes](#développement-de-thèmes)
-    - [Développement de plugin](#développement-de-plugin)
-    - [Formations](#formations)
-      - [Gratuit](#gratuit)
-      - [Payant](#payant)
-        - [les bases](#les-bases)
-        - [les bases à avancé (hyper complet)](#les-bases-à-avancé-hyper-complet)
+[TOC]
 
 ## Abréviations
 
@@ -214,6 +180,8 @@ La recherche sur Wordpress par défaut a pour forme `{domain}/?s=motRecherche`. 
 
 ### archive-${posttype}.php
 
+Archive accessible à l'url `/${posttype}`.
+
 **Il faut s'assurer à la registration que le CPT a bien `has_archive` à `true`**, sinon la hierarchie retombera sur `archive`.
 
 ~~~php
@@ -236,10 +204,20 @@ function mondomaine_register_cpt_monposttype() {
 
 add_action( 'init', 'mondomaine_register_cpt_monposttype' );
 
+
+
 ~~~
 
 - sert de fallback à : aucun (front). 
 - fallback : [archive](#archive.php)
+
+
+### single-${posttype}.php
+
+Template pour servir un simple CPT.
+
+- sert de fallback à : `single-${posttype}-${slug}` pour personalise la vue à un CPT en particulier, puis `custom` s'il match 
+- fallback : [single](#archive.php)
 
 ### Commentaires
 
@@ -305,6 +283,29 @@ Mais à utiliser *davantage pour le style que pour du templating*. On peut par e
 
 A utiliser pour le format `quote` pour les `testimonials` par exemple, au lieu d'un CPT !
 
+## Escaping output
+
+### Sécurité
+
+Avant de renvoyer une donnée dans un script php sur la sortie standard, on veut être sûr de pas envoyer du code malfaisant au client, et éviter du cross-site-scripting (XSS). Une [liste de fonctions utils](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-securing-output)
+
+- `esc_html()`: a utiliser pour print des données dans un élément html
+- etc...
+
+### Avec localization
+
+Voir [ici](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-with-localization)
+
+- `_e(text, domain)`, **print** une string traduite
+- `__(text,domain)`, **renvoie** une string traduite sans la print
+
+Pour échapper ces fonctions de traductions on fait soit par exemple `esc_html(__(text,domain))`. Soit en plus court (donc à privilégier) `esc_html_e(text, domain))`.
+
+~~~php
+esc_html_e( 'Hello World', 'text_domain' );
+// same as
+echo esc_html( __( 'Hello World', 'text_domain' ) );
+~~~
 
 ## Ressources
 
