@@ -561,7 +561,7 @@ Sanitize strips ou modifie les data, c'est a dire qu'il modifie l'entrée. C'est
 - sanitize_title
 - sanitize_email
 - sanitize_html_class
-- esc_url_raw
+- esc_url_raw : enleve caracteres invalides dans une url
 - sanitize_user
 - sanitize_option
 - sanitize_meta
@@ -608,6 +608,17 @@ echo "<p>Welcome back, {$html['username']}.</p>"
 
 Wordpress met à disposition tout un tas de fonctions pour l'échappement. Vous n'aurez surement jamais besoin d'utiliser htmlentities directement.
 
+*Output shoudl occured as late as possible*. Après que tous les filtres WP aient été appliquées. En gros, juste avant de l'echo sur la sortie standard.
+
+
+Les fonctions strip aussi les données (modifient)
+
+- **esc_html** : a utiliser à la place de htmlentities
+- esc_url: converse caracteres dans encoding url
+- esc_js: rend <script></script> inofensif
+- esc_attr: clean les attributs d'element html
+- esc_textarea: pareil que esc_html mais dans un text area
+
 Avant de renvoyer une donnée dans un script php sur la sortie standard, on veut être sûr de pas envoyer du code malfaisant au client, et éviter du cross-site-scripting (XSS). Une [liste de fonctions utils](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-securing-output)
 
 - `esc_html()`: a utiliser pour recuperer des données dans un élément html
@@ -629,6 +640,23 @@ echo esc_html( __( 'Hello World', 'text_domain' ) );
 
 ## Localization
 
+Pour la traduction.
+
+- **esc_html_e** : escape html, translate puis echo. A utiliser de préférence tout le temps !
+- esc_html__ : escape html; translate and return string
+- esc_attr_e : escape attribute, translate puis echo
+- _e : translate and echo (pas d'escape)
+- __ : translate et retourne (pas d'escape)
+
+Toutes ces fonctions prennent deux arguments
+
+~~~php
+_e('text a traduire', 'nom-**unique**-de-domaine');
+~~~
+
+`nom **unique** de domaine` vient du `Text Domain` de notre thème, définit obligatoirement dans le `style.css` de notre thème, avec toutes les autres métas du theme.
+
+Voir ce [lien](https://developer.wordpress.org/apis/handbook/internationalization/localization/) pour comprendre comment fonctionne en pratique la localization.
 
 ## Javascript dependencies
 
@@ -777,6 +805,8 @@ Très bien faite, mais peut parfois demander un peu d'experience pour s'y retrou
 - [Wordpress coding standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/)
 - [Template tags](https://codex.wordpress.org/Template_Tags)
 - [Using Permalinks](https://wordpress.org/support/article/using-permalinks/)
+- [Data Sanitization/Escaping](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-with-localization)
+- [Localization](https://developer.wordpress.org/apis/handbook/internationalization/localization/)
 
 ### Articles
 
@@ -788,8 +818,8 @@ Très bien faite, mais peut parfois demander un peu d'experience pour s'y retrou
 ### Livres
 
 - *Professional WordPress: Design and Development* de Brad Williams et David Damstra, Edition Wrox, 3rd Edition, 2015
-- `Essential PHP Security`, Chris Shiflett, Edition O'REILLY, 2006 (Attention certaines fonctions PHP sont deprecated mais sinon la philosophie et les conseils sont toujours pertinents et bien expliqués. Lecture 'attentive').
-- `Modern PHP: new features and goo, Josh Lochart, Edition O'REILLY, 2015
+- *Essential PHP Security*, Chris Shiflett, Edition O'REILLY, 2006 (Attention certaines fonctions PHP sont deprecated mais sinon la philosophie et les conseils sont toujours pertinents et bien expliqués. Lecture 'attentive').
+- *Modern PHP: new features and good practices*, Josh Lochart, Edition O'REILLY, 2015
 
 ### Podcasts
 
