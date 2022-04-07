@@ -548,7 +548,6 @@ Un ensemble de données `$data` arrive.
 - crée un tableau $clean vide. Ce tableau ne contiendra que des données dont on est sûrs qu'elles ont été validées.
 - creer un ensemble de **regles de validation** que $data doit passer avant de se retrouver dans $clean.
 - privilégier des fonctions builtin quand c'est possible (plus sur que votre code)
-
 - identifier l'input (donnée considérée comme invalide et sale)
 - valider l'input
 - distinguer entre donnée sale et donné valide
@@ -793,6 +792,20 @@ ou
 ~~~
 {mon-domain}/search/terme-recherche
 ~~~
+
+
+## Settings API : build your own administrative interfaces the core way
+
+Utiliser pour développer des plugins et des pages d'administration/d'options custom contenant des formulaires. On peut faire vraiment tout ce qu'on veut avec et le fait d'utiliser cette méthode plutot que des hacks (notamment via des pages d'options ACF (PRO ONLY!)) : donnent plusieurs avantages
+
+- visual consistency
+- robustness and future proof
+- less work : handling form submission, security nonce, sanitizing data for free (une fois qu'on a compris comment ça marchait)
+
+### Walkthrough
+
+On enregistre un setting avec register_setting
+
 
 ## Ressources
 
