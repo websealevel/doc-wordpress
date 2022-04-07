@@ -1,8 +1,6 @@
 # doc-wordpress
 
-[TOC]
-
-[- [doc-wordpress](#doc-wordpress)
+- [doc-wordpress](#doc-wordpress)
 	- [Abréviations](#abréviations)
 	- [Must used plugins](#must-used-plugins)
 	- [CPT(Custom Post Types) et CT (Custom Taxonomies)](#cptcustom-post-types-et-ct-custom-taxonomies)
