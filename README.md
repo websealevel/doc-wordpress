@@ -405,7 +405,7 @@ On peut changer le slug `category` et `tag` par défaut par un autre dans `Setti
 Pour les taxonomies custom. Imaginons on a créé un CPT `projet` et une CT `savoir-faire` avec un terme 'ebenisterie'. Comment lister tous les projets d'ébenisterie ?
 
 ~~~
-{`mon-domaine}/tag/tags`
+{`mon-domaine}/savoir-faire/ebenisterie`
 ~~~
 
 
@@ -446,6 +446,13 @@ Toujours utiliser `Post name`: plus comphrénsible, SEO friendly
 #### Outils SEO Wordpress
 
  - plugin [Yoast](https://yoast.com/), un des plugins les plus installés et maintenu de l'écosystème de Wordpress. Gratuit possible, user friendly pour vos administrateurs de contenus (clients). Ne pas hésiter à  l'installer.
+
+
+### Pagination
+
+- [`paginate_links()`](https://developer.wordpress.org/reference/functions/paginate_links/) : on a la main sur le nombre de pages de résultats et le formattage du markup de balisation
+- le nombre de posts par page est reglé depuis l'admin dans Settings/Reading
+- si on veut faire des choses plus contrôlés on passe par une [WP_Query](https://developer.wordpress.org/reference/classes/wp_query/)
 
 ### Divers
 
@@ -523,7 +530,62 @@ Mais à utiliser *davantage pour le style que pour du templating*. On peut par e
 
 A utiliser pour le format `quote` pour les `testimonials` par exemple, au lieu d'un CPT !
 
-## Escaping output
+
+## Sanitization
+
+Process of cleaning or filtering your input data. On parle aussi de sanitazing, validating, filtering, cleaning... Même si on peut dire qu'il y a des différences entre ces termes globalement ils veulent tous dire "preventing invalid from **entering** your application.
+
+Il y a plusieurs approches pour sanitize les données en entrée et certaines sont plus sécurisées que d'autres.
+
+La meilleure approche est de concevoir ce processus comme un processus **d'inspection**. N'essaie pas de corriger des données invalides, force les utilisateurs à jouer selon tes règles. L'histoire a montré que la tentative de corriger des données invalides a mené à des vulnérabilités. 
+
+Avoir une whitelist approach : on fait l'hypothèse que toute donnée qui arrive est invalide sauf si on peut prouver qu'elle ne l'est pas. Ainsi, l'erreur qu'on risque de faire c'est d'invalider une donnée valide. Ce qui est facheux mais moins que l'inverse.
+
+### Méthodologie proposée, exemple en PHP
+
+Un ensemble de données `$data` arrive.
+
+- crée un tableau $clean vide. Ce tableau ne contiendra que des données dont on est sûrs qu'elles ont été validées.
+- creer un ensemble de **regles de validation** que $data doit passer avant de se retrouver dans $clean.
+- privilégier des fonctions builtin quand c'est possible (plus sur que votre code)
+
+- identifier l'input (donnée considérée comme invalide et sale)
+- valider l'input
+- distinguer entre donnée sale et donné valide
+
+## Escaping (output)
+
+Escaping output : échaper ou encoder des caractères pour être sûrs que leur signification originale est preservée, et eviter d'envoyer un résultat dangereux à un système exterieur à votre site/application (navigateur, base de données, url).
+
+Escaping output est aussi en 3 étaps:
+
+- identifier les output
+- échapper les outputs
+- distinguer entre donnée échappée et non échappéé
+
+### Pour envoyer des données vers le client (navigateur)
+
+[`htmlentities`](https://www.php.net/manual/fr/function.htmlentities.php) est la meilleure fonction. Prend en entrée une string et retourne une version modifiée de telle sorte que certains caractères ne seront pas intérpretés par le navigateur (balises html ou scrit, "<" ). htmlentities accepte des arguments qui permettent de définir les règles d'échappement et le character set qui doit correspondre à celui indiqué dans le header Content-Type de votre requête réponse au client.
+
+En gros utilisez toujours `htmlentities($donnée_a_echaper, ENT_QUOTES, 'UTF_8')`.
+
+Un exemple
+
+~~~php
+
+//identification de notre sortie
+$html=array();
+
+//echappement
+$html['username'] = htmlentities($clean['username'], ENT_QUOTES, 'UTF_8');
+
+//servi au client
+echo "<p>Welcome back, {$html['username']}.</p>"
+~~~
+
+#### Dans Wordpress
+
+Wordpress met à disposition tout un tas de fon
 
 ### Sécurité
 
@@ -645,6 +707,44 @@ wp_get_archives( $args );
 - wp_title (deprecated, auto display a present)
 - allowed_tags()
 - wp_enqueue_scripts()
+
+## Navigation tags
+
+- [wp_nav_menu](https://developer.wordpress.org/reference/functions/wp_nav_menu/): display a menu on the page. Utiliser tous les args pour les wrapper au lieu de faire du markup HTML a la main autour.
+- [register_nav_menu](https://developer.wordpress.org/reference/functions/register_nav_menus/): ajouter des locations de menu
+- walk_nav_menu_tree (used internally by the core) utilisé pour controler comment les menus sont construits et affichés
+
+## Link tags
+
+- the_permalink(): a connaitre
+- get_permalink(): a connaitre 
+- get_post_permalink()
+- get_page_link()
+- get_attachment_link()
+- edit_post_link()
+- get_edit_post_link()
+- get_delete_post_link()
+- edit_comment_link()
+- edit_tag_link()
+- home_url()
+- site_url()
+- get_search_url($terme_recherche): Retrieves the permalink for a search. 
+- get_search_query()
+- the_feed_link()
+
+## Search
+
+2 notations équivalentes dans l'url
+
+~~~
+{mon-domain}/?s=terme-recherche
+~~~
+
+ou
+
+~~~
+{mon-domain}/search/terme-recherche
+~~~
 
 ## Ressources
 
