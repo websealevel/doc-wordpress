@@ -249,6 +249,24 @@ Archive accessible à l'url `/${posttype}`.
 
 **Il faut s'assurer à la registration que le CPT a bien `has_archive` à `true`**, sinon la hierarchie retombera sur `archive`.
 
+Même si on réécrit le slug du CPT lorsqu'on l'enregistre avec `register_post_type`
+
+~~~php
+	$args = array(
+
+		'rewrite'               => array(
+			'slug'       => 'projets',
+			'with_front' => true,
+		),
+
+
+	);
+
+	register_post_type( 'projet', $args );
+~~~
+
+l'archive pour le CPT projet **restera `archive-projet.php`**. Le `rewrite` ne réécrit que le `slug` dans les permaliens, **la hierarchie des templates n'est pas concernée**. Ainsi, pour appeler le template `archive-projet.php` je pourrais demander l'url `{mon-domain}/projets`.
+
 ~~~php
 function mondomaine_register_cpt_monposttype() {
 	/**
@@ -302,9 +320,7 @@ Template pour liste de tous les items d'une CT.
 
 ### Commentaires
 
-- ne jamais utiliser ${id} comme template ! Sauf en cas de force majeure. Trop dépendant de la bdd et peu explicite
-
-
+- ne jamais utiliser `*-${id}` comme template ! Sauf en cas de force majeure. Trop dépendant de la bdd et peu explicite.
 
 ## Taxonomies
 
