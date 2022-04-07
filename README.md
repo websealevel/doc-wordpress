@@ -553,9 +553,24 @@ Un ensemble de données `$data` arrive.
 - valider l'input
 - distinguer entre donnée sale et donné valide
 
+### Sanitization dans Wordpress
+
+Sanitize strips ou modifie les data, c'est a dire qu'il modifie l'entrée. C'est donc du filtre qui peut ouvrir vers des vulnérabilités. Il faut faire confiance à une fonction maintenue par une communauté depuis 20ans.
+
+- sanitize_text_field
+- sanitize_title
+- sanitize_email
+- sanitize_html_class
+- esc_url_raw
+- sanitize_user
+- sanitize_option
+- sanitize_meta
+
 ## Escaping (output)
 
 Escaping output : échaper ou encoder des caractères pour être sûrs que leur signification originale est preservée, et eviter d'envoyer un résultat dangereux à un système exterieur à votre site/application (navigateur, base de données, url).
+
+Pareil que pour la sanitization, on fait l'assomption que toute donnée peut etre malveillante (meme si on a validé).
 
 Escaping output est aussi en 3 étaps:
 
@@ -583,16 +598,19 @@ $html['username'] = htmlentities($clean['username'], ENT_QUOTES, 'UTF_8');
 echo "<p>Welcome back, {$html['username']}.</p>"
 ~~~
 
-#### Dans Wordpress
+### Pour envoyer des données vers une base de données
 
-Wordpress met à disposition tout un tas de fon
+ - utiliser une fonction native à votre base de données (implementée pour elle)
+ - mysqli::real_escape_string
+ - **PDO**, nouveau standard dans PHP. Pour des requetes préparées.
 
-### Sécurité
+### Escaping dans Wordpress
+
+Wordpress met à disposition tout un tas de fonctions pour l'échappement. Vous n'aurez surement jamais besoin d'utiliser htmlentities directement.
 
 Avant de renvoyer une donnée dans un script php sur la sortie standard, on veut être sûr de pas envoyer du code malfaisant au client, et éviter du cross-site-scripting (XSS). Une [liste de fonctions utils](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-securing-output)
 
-- `esc_html()`: a utiliser pour print des données dans un élément html
-- etc...
+- `esc_html()`: a utiliser pour recuperer des données dans un élément html
 
 ### Avec localization
 
@@ -608,6 +626,8 @@ esc_html_e( 'Hello World', 'text_domain' );
 // same as
 echo esc_html( __( 'Hello World', 'text_domain' ) );
 ~~~
+
+## Localization
 
 
 ## Javascript dependencies
@@ -767,7 +787,9 @@ Très bien faite, mais peut parfois demander un peu d'experience pour s'y retrou
 
 ### Livres
 
-- *Professional WordPress: Design and Development* de Brad Williams et David Damstra, Edition Wrox, 3rd Edition (27 janvier 2015)
+- *Professional WordPress: Design and Development* de Brad Williams et David Damstra, Edition Wrox, 3rd Edition, 2015
+- `Essential PHP Security`, Chris Shiflett, Edition O'REILLY, 2006 (Attention certaines fonctions PHP sont deprecated mais sinon la philosophie et les conseils sont toujours pertinents et bien expliqués. Lecture 'attentive').
+- `Modern PHP: new features and goo, Josh Lochart, Edition O'REILLY, 2015
 
 ### Podcasts
 
