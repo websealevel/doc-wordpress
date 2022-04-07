@@ -381,6 +381,71 @@ Si on applique la hierarchie à la taxonomy custom
 - index.php
 ~~~
 
+Prendre des précautions [lorsqu'on choisit un nom pour la taxonomy](https://developer.wordpress.org/reference/functions/register_taxonomy/#more-information), qu'elle ne rentre pas en conflit avec des `[noms reservés par Wordpress](https://core.trac.wordpress.org/browser/trunk/src/wp-includes/class-wp.php). Par exemple ne pas utiliser le mot *action*.
+
+
+### Taxonomy permaliens
+
+On a par défaut les taxonomies `Catégories` (slug `category`) et `Etiquettes` (slug `tag`) pour les articles (slug `post`). Par défaut on a un *term* "Uncategorized" pour la *taxonomie* `category` et un term "Tags" pour la taxonomie `tag`.
+
+Donc par défaut pour accéder a la liste des posts `uncategorized` l'url sera 
+
+~~~
+{`mon-domaine}/category/uncategoried`
+~~~
+
+De même, pour accéder a la liste des posts étiquettés `Tags` l'url sera
+
+~~~
+{`mon-domaine}/tag/tags`
+~~~
+
+On peut changer le slug `category` et `tag` par défaut par un autre dans `Settings/Permalinks/Optional`.
+
+Pour les taxonomies custom. Imaginons on a créé un CPT `projet` et une CT `savoir-faire` avec un terme 'ebenisterie'. Comment lister tous les projets d'ébenisterie ?
+
+~~~
+{`mon-domaine}/tag/tags`
+~~~
+
+
+### Permalinks (SEO)
+
+Le permalink dans Wordpress c'est l'URL entière d'une page (incluant le protocole, le nom de domain).
+
+Le SEO ou Ranking de vos contenus parmi les résulats retournés par votre navigateur est hyper important si vous voulez être trouvé. Qui va sur la 2eme page de Google resultats ? (Montrer stat)
+
+Le SEO c'est souvent de l'arnaque et de la magie noire (ca depend par exemple de code propriétaire du moteur de Google et les règles peuvent changer très vite) mais c'est important. Et il y a quand même des règles stables dans le temps.
+
+Essayer de prévoir le SEO `avant` de commencer le développement ou la mise en prod de votre site. Cela vous aidera a la structuration de vos pages. Le faire après peut devenir vite compliqué voire impossible (croyez moi).
+
+#### Slug
+
+Les slug sont la dernière partie de l'url, par exemple dans `example.com/about-us` le slug est `about-us`. Dans `example.com/?p=356` il n'y a pas de 
+
+Toujours utiliser `Post name`: plus comphrénsible, SEO friendly
+
+- search engines use your URL to determine what your page or content page is all about. And if they found your permalink related to the content or page, the search engines find it genuine and legitimate to give them priority in their search engine rankings.
+
+- Using SEO keywords in your URL can help you rank for your target keywords. Google uses the URL as a factor in ranking your page, so if the URL slug includes your keywords, then Google will be more likely to rank it.
+
+#### URL best practices
+
+- use HTTPS
+- nom de domaine clair et unique
+- keep it short and precise (concis). Le poids des derniers mots pour les bots crawlers est plus faible
+- lisible pour les robots **et** pour les humains
+- utiliser des sous-domaine: `sous-domaine.mon-domaine.com`
+- placer des mots clefs qui décrivent le contenu de la page
+- eviter de mettre une année dans l'URL
+- eviter la duplication d'URL sur votre site
+- The best time to change a permalink is *when* you’re originally creating the post content `before` the post is published. Why? If you change a post’s slug after it has already been published, beware that you’re also changing the post’s URL, so the permalink change may create a 404 page. Any links that have been shared online using the old URL will not work any longer and will need to have redirects set up to the new URL. By customizing your post slug prior to publishing the content, you’ll have an optimized permalink the second your hit the publish button.
+- consistent structure sur tout le site 
+
+
+#### Outils SEO Wordpress
+
+ - plugin [Yoast](https://yoast.com/), un des plugins les plus installés et maintenu de l'écosystème de Wordpress. Gratuit possible, user friendly pour vos administrateurs de contenus (clients). Ne pas hésiter à  l'installer.
 
 ### Divers
 
@@ -583,18 +648,22 @@ wp_get_archives( $args );
 
 ## Ressources
 
-### Doc officielle
+### Doc officielle wordpress.org
+
+Très bien faite, mais peut parfois demander un peu d'experience pour s'y retrouver 
 
 - [Codex](https://codex.wordpress.org/)
 - [Wordpress hierarchy](https://developer.wordpress.org/themes/basics/template-hierarchy/)
 - [Wordpress coding standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/)
 - [Template tags](https://codex.wordpress.org/Template_Tags)
+- [Using Permalinks](https://wordpress.org/support/article/using-permalinks/)
 
 ### Articles
 
 #### Taxonomies
 
 - [WordPress Taxonomies: The Ultimate Guide](https://ithemes.com/blog/wordpress-taxonomies)
+- [WordPress Permalinks: The Essential Guide](https://ithemes.com/blog/wordpress-permalinks)
 
 ### Livres
 
