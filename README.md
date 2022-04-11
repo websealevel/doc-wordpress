@@ -62,7 +62,6 @@
 	- [Link tags](#link-tags)
 	- [Search](#search)
 	- [Sécurité](#sécurité)
-		- [En bref](#en-bref)
 	- [Configuration](#configuration)
 		- [Quelques configures du `wp-config.php`](#quelques-configures-du-wp-configphp)
 		- [.htaccess](#htaccess)
@@ -820,7 +819,7 @@ ou
 
 ## Sécurité
 
-### En bref
+****### En bref
 
 - rester à jour (core, plugins, themes)
 - modifier le prefixe des tables de wordpress, ne pas utiliser `wp_`
@@ -834,7 +833,7 @@ ou
     define('WP_CONTENT_URL', 'http://example/com/mon-site/wp-content');
     define('WP_PLUGIN_URL', 'http://example.com/mon-site/wp-content/plugins');
     ~~~
-- utiliser les roles
+- utiliser les rôles
 - utiliser les salts
 - forcer le SSL au login et aux admins avec `define('FORCE_SSL_LOGIN', true);` et `define('FORCE_SSL_ADMIN', true);`
 - utiliser un plugin spécialisé en sécurtié comme [BulletProof Security (BPS)](https://forum.ait-pro.com/read-me-first/), Wordfrence Security
@@ -863,7 +862,7 @@ define('FORCE_SSL_ADMIN', true);
 
 ### .htaccess
 
-Le fichier .htaccess est un fichier de configuration d'Apache. On peut y définir des règles et c'es là que réside la magie de wordpress
+Le fichier `.htaccess` est un fichier de configuration d'Apache. On peut y définir des règles et c'est là que réside la magie de wordpress
 
 ~~~.htaccess
 RewriteCond ${REQUEST_FILENAME} !-f
@@ -871,7 +870,7 @@ RewriteCond ${REQUEST_FILENAME} !-d
 RewriteRule . /index.php [ L]
 ~~~
 
-Ce .htaccess dit *si la requete ne demande ni un fichier, ni un repertoire qui existe sur le path alors renvoie la requete vers le index.php*, ce dernier lancant tout le core de wordpress.
+Ce `.htaccess` dit *si la requete ne demande ni un fichier, ni un repertoire qui existe sur le path alors renvoie la requete vers le index.php*, ce dernier lancant tout le core de wordpress.
 
 On peut se servir du .htaccess pour rajouter de la config
 
@@ -880,7 +879,7 @@ On peut se servir du .htaccess pour rajouter de la config
 - taille des uploads max: `php_value upload_max_filesize 20M` et `php_value post_max_size 20M`
 - sécurtié, restreindre l'accès à des IP.
 
-Bonne pratique : restreindre l'accès au dossier wp-admin a une liste blanche d'ip. Pour cela, creer un .htaccess dans le dossier wp-admin avec le code suivant
+Bonne pratique : restreindre l'accès au dossier `wp-admin` a une liste blanche d'ip. Pour cela, creer un `.htaccess` dans le dossier `wp-admin` avec le code suivant
 
 ~~~.htaccess
 AuthType Basic
@@ -943,11 +942,12 @@ Utiliser pour développer des plugins et des pages d'administration/d'options cu
 
 ### Walkthrough
 
-On enregistre un setting avec register_setting
+A venir
 
 ## Plugins recommandés (dont semi officiels)
 
 - [W3 Total Cache](https://www.boldgrid.com/w3-total-cache/) : permet de mettre en cache les pages générés par Wordpress. Crée un dossier wp-content/cache et y stocke du html static généré par les requetes précédentes. La prochaine fois qu'une page est appelée, au lieu d'executer la loop et de faire des requetes a la base, wordpress sert la page static déjà générée. Ameliore le SEO, Lazy Image etc...
+- [BPS Security](https://forum.ait-pro.com/read-me-first/) : sécurité de Wordpress (alternative solide à Wordfence)
 
 ## Ressources
 
