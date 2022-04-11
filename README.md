@@ -168,7 +168,7 @@ En gros c'est pas compliqué : par défaut Wordpress nous met en home la liste d
 - sert de fallback à : front-page 
 - fallback : [index](#index.php)
 
-## front-page.php
+### front-page.php
 
 Voir [ici](https://developer.wordpress.org/themes/basics/template-hierarchy/#front-page-display) l'explication détaillée
 
