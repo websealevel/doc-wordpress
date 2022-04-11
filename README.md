@@ -61,8 +61,16 @@
 	- [Navigation tags](#navigation-tags)
 	- [Link tags](#link-tags)
 	- [Search](#search)
+	- [Sécurité](#sécurité)
+		- [En bref](#en-bref)
+	- [Configuration](#configuration)
+		- [Quelques configures du `wp-config.php`](#quelques-configures-du-wp-configphp)
+		- [.htaccess](#htaccess)
+	- [Debugging](#debugging)
+	- [Maintenance](#maintenance)
 	- [Settings API : build your own administrative interfaces the core way](#settings-api--build-your-own-administrative-interfaces-the-core-way)
 		- [Walkthrough](#walkthrough)
+	- [Plugins recommandés (dont semi officiels)](#plugins-recommandés-dont-semi-officiels)
 	- [Ressources](#ressources)
 		- [Doc officielle wordpress.org](#doc-officielle-wordpressorg)
 		- [Articles](#articles)
@@ -76,7 +84,6 @@
 			- [Payant](#payant)
 				- [les bases](#les-bases)
 				- [les bases à avancé (hyper complet)](#les-bases-à-avancé-hyper-complet)
-
 ## Abréviations
 
 - CPT: Custom Post Type
