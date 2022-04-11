@@ -830,7 +830,7 @@ ou
 - utiliser les roles
 - utiliser les salts
 - forcer le SSL au login et aux admins avec `define('FORCE_SSL_LOGIN', true);` et `define('FORCE_SSL_ADMIN', true);`
-- utiliser un plugin spécialisé en sécurtié comme [BulletProof Security (BPS)](), Wordfrence Security
+- utiliser un plugin spécialisé en sécurtié comme [BulletProof Security (BPS)](https://forum.ait-pro.com/read-me-first/), Wordfrence Security
 ## Configuration
 
 ### Quelques configures du `wp-config.php`
