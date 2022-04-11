@@ -1,5 +1,6 @@
 # doc-wordpress
 
+[TOC]
 - [doc-wordpress](#doc-wordpress)
 	- [Abréviations](#abréviations)
 	- [Must used plugins](#must-used-plugins)
@@ -810,6 +811,120 @@ ou
 {mon-domain}/search/terme-recherche
 ~~~
 
+## Sécurité
+
+### En bref
+
+- rester à jour (core, plugins, themes)
+- modifier le prefixe des tables de wordpress, ne pas utiliser `wp_`
+- limiter les tentatives de login
+- faire une whitelist des IP qui peuvent se connecter en tant qu'admin (dans le .htaccess)
+- utiliser des mots de passe forts
+- déplacer le fichier de configuration `wp-config.php` en dehors de l'install de wordpress. On peut le placer en dehors du root de Wordpress. Wordpress va checker automatiquement le dossier parent s'il trouve pas le wp-config dans son dossier d'install. Sur Apache, pour eviter qu'on puisse acceder au `wp-config.php` en plain/text (suite a un bug) on peut rajouter la regle `<FileMatch ^wp-config.php$>deny from all</FilesMatch>` au `.htaccess`
+- deplacer le repertoire wp-content ailleurs que dans l'install de wordpress. Cela ne rend pas le site plus secure mais ça permet d'échapper à bcp de scripts d'attaque car la structure ne sera plus standard. Ajouter dans le `wp-config.php` 
+    ~~~php
+    define('WP_CONTENT_DIR', $_SERVER['DOCUMENT_ROOT'] . '/mon-site/wp-content';
+    define('WP_CONTENT_URL', 'http://example/com/mon-site/wp-content');
+    define('WP_PLUGIN_URL', 'http://example.com/mon-site/wp-content/plugins');
+    ~~~
+- utiliser les roles
+- utiliser les salts
+- forcer le SSL au login et aux admins avec `define('FORCE_SSL_LOGIN', true);` et `define('FORCE_SSL_ADMIN', true);`
+- utiliser un plugin spécialisé en sécurtié comme [BulletProof Security (BPS)](), Wordfrence Security
+## Configuration
+
+### Quelques configures du `wp-config.php`
+
+~~~php
+// Active/Desactive toutes les maj auto (core, themes, plugins, translations).
+define( 'AUTOMATIC_UPDATED_DISABLED', false );
+// Maj auto pour le core de wp seulement: false, true ou minor.
+define( 'WP_AUTO_UPDATE_CORE', 'minor' );
+// Limite le nombre de revisions max pour un post.
+define( 'WP_POST_REVISIONS', 5 );
+// Limite l'intervalle entre 2 autosave en secondes. Par défaut 60s.
+define( 'AUTOSAVE_INTERNAL', 120 )
+// Memoire RAM max alloué à Wordpress par le serveur (si le host est d'accord)
+define('WP_MEMORY_LIMIT', '64MB');
+// Active le cache, utile pour certains plugins pour optimiser le site
+define('WP_CACHE', true);
+//Forcer le SSL pour le login
+define('FORCE_SSL_LOGIN', true);
+//Forcer le SSL pour servir toutes les pages d'admin (/wp-admin). Ralentit le chargement des pages d'admin mais assure l'encryption de toutes les données.
+define('FORCE_SSL_ADMIN', true);
+~~~
+
+### .htaccess
+
+Le fichier .htaccess est un fichier de configuration d'Apache. On peut y définir des règles et c'es là que réside la magie de wordpress
+
+~~~.htaccess
+RewriteCond ${REQUEST_FILENAME} !-f
+RewriteCond ${REQUEST_FILENAME} !-d
+RewriteRule . /index.php [ L]
+~~~
+
+Ce .htaccess dit *si la requete ne demande ni un fichier, ni un repertoire qui existe sur le path alors renvoie la requete vers le index.php*, ce dernier lancant tout le core de wordpress.
+
+On peut se servir du .htaccess pour rajouter de la config
+
+- redirections permanentes: `301 redirect 301 {ancienne-url} {nouvelle-url}`
+- mémoire allouée à PHP : `php_value memory_limit 64M`
+- taille des uploads max: `php_value upload_max_filesize 20M` et `php_value post_max_size 20M`
+- sécurtié, restreindre l'accès à des IP.
+
+Bonne pratique : restreindre l'accès au dossier wp-admin a une liste blanche d'ip. Pour cela, creer un .htaccess dans le dossier wp-admin avec le code suivant
+
+~~~.htaccess
+AuthType Basic
+order deny,allow
+deny from all
+#IP adress to whitelist
+allow from xxx.xxx.xxx.xxx.
+~~~~
+
+Ainsi, seule une liste blanche d'IP d'amin peuvent se connecter en tant qu'admin au Wordpress. Si l'admin a une nouvelle IP il suffit de l'ajouter à la liste.
+
+Configuration de log d'erreur pour un site en production directement dans le .htaccess
+
+~~~.htaccess
+php_flag display_startup_errors off
+php_flag display_errors off
+php_flag html_errors off
+php_flag log_errors on
+php_value error_log /public_html/php_errors.log
+~~~
+où `error_log` est une valeur relative au document root du web server (du Virtual Host) et non la racine de l'install de Wordpress.
+
+## Debugging
+
+~~~php
+// Active le mode debug - equivalent à  php_flag log_errors on
+define( 'WP_DEBUG', true );
+// Ne pas afficher les messages d'erreur sur la sortie standard.
+define( 'WP_DEBUG_DISPLAY', false );
+// Log les erreurs dans le fichier debug.log.
+define( 'WP_DEBUG_LOG', true );
+// Log toutes les requetes vers la db dans un tableau,
+define( 'SAVEQUERIES', true );
+// Pour afficher le tableau de la requête
+global $wpdb;
+print_r( $wpdb->queries );
+//Afficher toutes les constantes PHP disponibles
+print_r( get_defined_constants() );
+~~~
+
+## Maintenance
+
+Il y a un mode maintenance natif à Wordpress. Il suffit de créer un fichier `.maintenance` à la racine de l'installation de wordpress et y mettre le code suivant
+
+~~~php
+<?php
+ $upgrading = time();
+?>
+~~~
+
+On peut customiser davantage cette page en créant un fichier `maintenance.php` dans le `wp-content`. Celui-ci prend la priorité sur le fichier `.maintenance`
 
 ## Settings API : build your own administrative interfaces the core way
 
@@ -823,6 +938,9 @@ Utiliser pour développer des plugins et des pages d'administration/d'options cu
 
 On enregistre un setting avec register_setting
 
+## Plugins recommandés (dont semi officiels)
+
+- [W3 Total Cache](https://www.boldgrid.com/w3-total-cache/) : permet de mettre en cache les pages générés par Wordpress. Crée un dossier wp-content/cache et y stocke du html static généré par les requetes précédentes. La prochaine fois qu'une page est appelée, au lieu d'executer la loop et de faire des requetes a la base, wordpress sert la page static déjà générée. Ameliore le SEO, Lazy Image etc...
 
 ## Ressources
 
@@ -856,8 +974,6 @@ Très bien faite, mais peut parfois demander un peu d'experience pour s'y retrou
 - https://phproundtable.com/episode/all-things-wordpress
 - https://podcast.htmlallthethings.com/e/the-thing-about-wordpress/
 
-
-- 
 ### Développement de thèmes
 
 - [Underscores](https://underscores.me/)
@@ -874,6 +990,15 @@ Très bien faite, mais peut parfois demander un peu d'experience pour s'y retrou
 #### Gratuit
 
 - [Cours wordpress.org](https://learn.wordpress.org/courses)
+- [Building websites with WordPress](https://nmiletic.gumroad.com/l/kSrqD) 
+- [Learn Wordpress](https://kinsta.com/learn/)
+- [Wordpress for beginners training](https://yoast.com/academy/free-training-wordpress-for-beginners/)
+- [How to Learn WordPress for Free in a Week (or Less)](https://twitter.com/natmiletic/status/1511711827398258695)
+- [Wordpress tutorials](https://www.siteground.com/tutorials/wordpress/)
+- [How to](https://wordpress.tv/category/how-to/), video
+- [Our wordpress library](https://wpapprentice.com/courses/)
+- [Wordpress freecodecamp](https://www.freecodecamp.org/news/tag/wordpress/)
+- [Building PHP MVC Framework from Scratch](https://www.youtube.com/watch?v=WKy-N0q3WRo&list=PLLQuc_7jk__Uk_QnJMPndbdKECcTEwTA1), The Codeholic. Pas sur Wordpress mais montre les fonctionnalités de base d'un framework à implémenter
 
 #### Payant
 
