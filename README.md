@@ -948,7 +948,50 @@ A venir
 
 - [W3 Total Cache](https://www.boldgrid.com/w3-total-cache/) : permet de mettre en cache les pages générés par Wordpress. Crée un dossier wp-content/cache et y stocke du html static généré par les requetes précédentes. La prochaine fois qu'une page est appelée, au lieu d'executer la loop et de faire des requetes a la base, wordpress sert la page static déjà générée. Ameliore le SEO, Lazy Image etc...
 - [BPS Security](https://forum.ait-pro.com/read-me-first/) : sécurité de Wordpress (alternative solide à Wordfence)
+- ACF, la base pour manipuler les post metas
 
+## Optimiser Wordpress (scalability et performances)
+
+- hebergeur adapté
+- mettre en place une mise en cache
+- ne pas uploader vidéos/audio sur le site. Mettre sur youtube, soundcloud et utiliser le lien plutot. Ca augmente la taille des backups, ca coute cher en bande passante
+- reduire les appels à la db (mieux vaut remonter plus d'infos en une fois que une info puis une info puis une info)
+- limite le nb de revisions de posts. Dans le `wp-config.php` : `define( 'WP_POST_REVISIONS', 3 );`
+- disable hotlinking and leaching of your content
+~~~.htaccess
+#disable hotlinking of images with forbidden or custom image option
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?{domaine} [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?google.com [NC]
+RewriteRule \.(jpg|jpeg|png|gif)$ – [NC,F,L] 
+~~~
+- limiter la taille des postes/pages
+- afficher l'excerpt plutot que tout le post dans les listings
+- reduire nb de plugins
+- au lieu de link vers des CDN (font, icons, js lib) les mettre directement sur le site
+- optimisez les images pour le web (compression, taille)
+- lazy loading
+- configurer PHP via le `php.ini`, desactiver les extensions inutiles pour wordpress
+~~~php.ini
+;security
+expose_php = Off
+;performence
+register_globals = Off
+register_long_arrays = Off
+register_argv_argv = Off
+magic_quotes_gpc = Off
+magic_quotes_runtime = Off
+magic_quotes_sysbase = Off
+;upload
+file_uploads = On
+memory_limit = 128M
+upload_max_filesize = 10M
+post_max_size = 48M
+max_execution_time = 600
+max_input_vars = 1000
+~~~
+- mettre la table de `wp_comments` en InnoDB (adapté pour lecture de grands volumes) si MySql ou utiliser MariaDB
 ## Ressources
 
 ### Doc officielle wordpress.org
@@ -962,6 +1005,15 @@ Très bien faite, mais peut parfois demander un peu d'experience pour s'y retrou
 - [Using Permalinks](https://wordpress.org/support/article/using-permalinks/)
 - [Data Sanitization/Escaping](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-with-localization)
 - [Localization](https://developer.wordpress.org/apis/handbook/internationalization/localization/)
+
+
+### Hebergeurs dédiés (pour des sites en production)
+
+Ces hebergeurs spécialisés peuvent être utiles si vous êtes pro et cherchez des solutions pour des clients prêt à payer. Sinon ne vous prenez pas la tête et utiliser l'hebergeur le moins cher possible !
+
+- [siteground](https://www.siteground.com/wordpress-hosting.htm). Le mieux on dirait car on a pas de restrictions sur nos acces (on a un ssh) et c'est optimisé (php, plugin cache custom installé par défaut), pas trop cher
+- [bluehost](https://www.bluehost.com/wordpress/managed-hosting)
+- [liquidweb](https://www.liquidweb.com/products/managed-wordpress/)
 
 ### Articles
 
