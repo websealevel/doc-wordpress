@@ -1009,7 +1009,7 @@ Très bien faite, mais peut parfois demander un peu d'experience pour s'y retrou
 
 ### Hebergeurs dédiés (pour des sites en production)
 
-Ces hebergeurs spécialisés peuvent être utiles si vous êtes pro et cherchez des solutions pour des clients prêt à payer. Sinon ne vous prenez pas la tête et utiliser l'hebergeur le moins cher possible !
+Ces hebergeurs spécialisés peuvent être utiles si vous êtes pro et cherchez des solutions **pour des clients prêt à payer**. Sinon ne dépensez pas votre argent inutilement et utilisez l'hebergeur le moins cher possible !
 
 - [siteground](https://www.siteground.com/wordpress-hosting.htm). Le mieux on dirait car on a pas de restrictions sur nos acces (on a un ssh) et c'est optimisé (php, plugin cache custom installé par défaut), pas trop cher
 - [bluehost](https://www.bluehost.com/wordpress/managed-hosting)
