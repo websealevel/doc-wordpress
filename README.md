@@ -1104,6 +1104,7 @@ Ces hebergeurs spécialisés peuvent être utiles si vous êtes pro et cherchez 
 ### Livres
 
 - *Professional WordPress: Design and Development* de Brad Williams et David Damstra, Edition Wrox, 3rd Edition, 2015
+- *Professional WordPress Plugin Development* de Brad Williams et Justin Taldock, Edition Wrox, 2nd Edition, 2020
 - *Essential PHP Security*, Chris Shiflett, Edition O'REILLY, 2006 (Attention certaines fonctions PHP sont deprecated mais sinon la philosophie et les conseils sont toujours pertinents et bien expliqués. Lecture 'attentive').
 - *Modern PHP: new features and good practices*, Josh Lochart, Edition O'REILLY, 2015
 
