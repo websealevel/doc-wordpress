@@ -1000,7 +1000,7 @@ On enregistre une section sur la page `domain-options` (id de la page). La callb
 
 On définit notre fonction domain_settings_page_html qui va construire notre page d'options (markup)
 
-~~~php
+```php
 function domain_settings_page_html(){
 ?>
 <div class="wrap">
@@ -1021,7 +1021,7 @@ function domain_settings_page_html(){
 }
 <?php
 }
-~~~
+```
 
 ## Plugins recommandés (dont semi officiels)
 
