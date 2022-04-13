@@ -940,9 +940,27 @@ Utiliser pour développer des plugins et des pages d'administration/d'options cu
 - robustness and future proof
 - less work : handling form submission, security nonce, sanitizing data for free (une fois qu'on a compris comment ça marchait)
 
+Cette API est très bien mais elle est vraiment pas intuitive et demande pas mal de code boilerplate pour être effective. Cela dit elle est native, supportée et encouragée pour développer des plugins, des pages d'options d'un thème de manière professionnelle.
+
+Il y'a d'autres alternatives, comme des frameworks qui encapsulent tout ça mais comme tout usage de code tiers il faut faire attention à ce que ces frameworks soient bien maintenus dans le temps et soient capables d'accomoder les éventuelles évolutions de la Settings API. Voir la section ressources.
+
+Dans tous les cas, avant d'utiliser des outils pour vous épargner beaucoup de travail redondant il est bien de le faire au moins une fois pour savoir qu'est ce qui vous ne plait pas pour trouver éventuellement le bon outil pour vous facilier la vie, ou créer le votre.
+
 ### Walkthrough
 
+#### Creer une page d'options
+
 A venir
+
+#### Définir des options
+
+~~~php
+register_setting('domain-settings-group','domain_options','domain_sanitize_options');
+~~~
+
+`register_settings` définit les options qui seront manipulés sur la page d'options. Ces options seront enregistrées dans la table `wp_options` sous la forme de paires clé valeur.
+
+On va avoir plusieurs champs, plusieurs options à définir mais on va les enregistrer sous la même clef dans la table sous forme de tableau serialisé. Le premier paramètre est l'options group name, il permet d'identifier toutes les options. Le deuxième paramètre est important car c'est la clef sous laquelle sera enregistrée les options dans la table. Il doit être unique. Le troisième paramètre est la callback pour sanitizer les valeurs de nos options.
 
 ## Plugins recommandés (dont semi officiels)
 
@@ -1041,6 +1059,21 @@ Ces hebergeurs spécialisés peuvent être utiles si vous êtes pro et cherchez 
 
 - [Plugingplate](https://pluginplate.com/plugin-boilerplate/) : starterpack
 - [Introduction](https://developer.wordpress.org/plugins/intro/)
+
+### Settings API Frameworks/Tools
+
+A vos risques et périls
+
+- [5 Ways to Create a WordPress Plugin Settings Page ](https://deliciousbrains.com/create-wordpress-plugin-settings-page/)
+- [WordPress Settings Framework](https://github.com/iconicwp/WordPress-Settings-Framework)
+- [Creating A WordPress Settings Page Using the WordPress REST API](https://torquemag.io/2017/06/creating-wordpress-settings-page-using-wordpress-rest-api/)
+- [wp-optionskit](https://github.com/WPUserManager/wp-optionskit)
+- [Settings API Code Generator](http://wpsettingsapi.jeroensormani.com/)
+
+### Custom Fields
+
+- [ACF](https://www.advancedcustomfields.com/), classic et solide. Mais payant pour avoir accès a des features hyper utiles comme des champs repeater ou des pages d'options
+- [Carbon](https://carbonfields.net/), meilleure alternative à ACF. Complètement gratuit, solide et robuste. Champs repeaters et gallery gratuit !
 
 ### Formations
 
