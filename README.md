@@ -12,7 +12,7 @@
 		- [single-post.php](#single-postphp)
 		- [single-{posttype}.php](#single-posttypephp)
 		- [home.php](#homephp)
-	- [front-page.php](#front-pagephp)
+		- [front-page.php](#front-pagephp)
 		- [archive.php](#archivephp)
 		- [category.php](#categoryphp)
 		- [attachment.php](#attachmentphp)
@@ -52,14 +52,14 @@
 	- [Javascript dependencies](#javascript-dependencies)
 		- [Jquery](#jquery)
 	- [Template tags](#template-tags)
-	- [Include tags](#include-tags)
-	- [Login tags](#login-tags)
-	- [Bloginfo tags](#bloginfo-tags)
-	- [Archive tags](#archive-tags)
-	- [Calendar tags](#calendar-tags)
-	- [Misc tags](#misc-tags)
-	- [Navigation tags](#navigation-tags)
-	- [Link tags](#link-tags)
+		- [Include tags](#include-tags)
+		- [Login tags](#login-tags)
+		- [Bloginfo tags](#bloginfo-tags)
+		- [Archive tags](#archive-tags)
+		- [Calendar tags](#calendar-tags)
+		- [Misc tags](#misc-tags)
+		- [Navigation tags](#navigation-tags)
+		- [Link tags](#link-tags)
 	- [Search](#search)
 	- [Sécurité](#sécurité)
 	- [Configuration](#configuration)
@@ -68,16 +68,23 @@
 	- [Debugging](#debugging)
 	- [Maintenance](#maintenance)
 	- [Settings API : build your own administrative interfaces the core way](#settings-api--build-your-own-administrative-interfaces-the-core-way)
-		- [Walkthrough](#walkthrough)
+		- [Creer une page d'options](#creer-une-page-doptions)
+		- [Définir des options](#définir-des-options)
+		- [Définir des sections](#définir-des-sections)
+		- [Construire la page](#construire-la-page)
 	- [Plugins recommandés (dont semi officiels)](#plugins-recommandés-dont-semi-officiels)
+	- [Optimiser Wordpress (scalability et performances)](#optimiser-wordpress-scalability-et-performances)
 	- [Ressources](#ressources)
 		- [Doc officielle wordpress.org](#doc-officielle-wordpressorg)
+		- [Hebergeurs dédiés (pour des sites en production)](#hebergeurs-dédiés-pour-des-sites-en-production)
 		- [Articles](#articles)
 			- [Taxonomies](#taxonomies-1)
 		- [Livres](#livres)
 		- [Podcasts](#podcasts)
 		- [Développement de thèmes](#développement-de-thèmes)
 		- [Développement de plugin](#développement-de-plugin)
+		- [Settings API Frameworks/Tools](#settings-api-frameworkstools)
+		- [Custom Fields](#custom-fields)
 		- [Formations](#formations)
 			- [Gratuit](#gratuit)
 			- [Payant](#payant)
@@ -718,7 +725,7 @@ La plupart de ces fonctions acceptent des paramètres.
 the_title('<h1>','</h1>');
 ~~~
 
-## Include tags
+### Include tags
 
 - get_header()
 - get_footer()
@@ -727,7 +734,7 @@ the_title('<h1>','</h1>');
 - get_search_form()
 - comments_template()
 
-## Login tags
+### Login tags
 
 - wp_loginout() : pour fair un bouton de connexion/deconnexion facilement. Si on veut être redirigé vers la même page où est présent le bouton on peut faire `<?php wp_loginout( get_permalink() ?>`. La fonction prend en argument une url pour le `redirect` après login ou logout.
 - wp_logout_url()
@@ -737,11 +744,11 @@ the_title('<h1>','</h1>');
 - wp_register()
 - is_user_logged_in()
 
-## Bloginfo tags
+### Bloginfo tags
 
 - bloginfo(), voir tous les paramètres
 
-## Archive tags
+### Archive tags
 
 Pour les listings.
 
@@ -765,13 +772,13 @@ wp_get_archives( $args );
 ?>
 ~~~
 
-## Calendar tags
+### Calendar tags
 
 - **get_calendar()** (pareil que le widget, editable par l'user)
 - calendar_week_mod()
 - delete_get_calendar_cache()
 
-## Misc tags
+### Misc tags
 
 - wp_meta()
 - get_current_blog_id() (pour le multisites)
@@ -779,13 +786,13 @@ wp_get_archives( $args );
 - allowed_tags()
 - wp_enqueue_scripts()
 
-## Navigation tags
+### Navigation tags
 
 - [wp_nav_menu](https://developer.wordpress.org/reference/functions/wp_nav_menu/): display a menu on the page. Utiliser tous les args pour les wrapper au lieu de faire du markup HTML a la main autour.
 - [register_nav_menu](https://developer.wordpress.org/reference/functions/register_nav_menus/): ajouter des locations de menu
 - walk_nav_menu_tree (used internally by the core) utilisé pour controler comment les menus sont construits et affichés
 
-## Link tags
+### Link tags
 
 - the_permalink(): a connaitre
 - get_permalink(): a connaitre 
@@ -837,6 +844,7 @@ ou
 - utiliser les salts
 - forcer le SSL au login et aux admins avec `define('FORCE_SSL_LOGIN', true);` et `define('FORCE_SSL_ADMIN', true);`
 - utiliser un plugin spécialisé en sécurtié comme [BulletProof Security (BPS)](https://forum.ait-pro.com/read-me-first/), Wordfrence Security
+  
 ## Configuration
 
 ### Quelques configures du `wp-config.php`
@@ -942,25 +950,78 @@ Utiliser pour développer des plugins et des pages d'administration/d'options cu
 
 Cette API est très bien mais elle est vraiment pas intuitive et demande pas mal de code boilerplate pour être effective. Cela dit elle est native, supportée et encouragée pour développer des plugins, des pages d'options d'un thème de manière professionnelle.
 
-Il y'a d'autres alternatives, comme des frameworks qui encapsulent tout ça mais comme tout usage de code tiers il faut faire attention à ce que ces frameworks soient bien maintenus dans le temps et soient capables d'accomoder les éventuelles évolutions de la Settings API. Voir la section ressources.
+Il y'a d'autres alternatives, comme des frameworks qui encapsulent tout ça mais comme tout usage de code tiers il faut faire attention à ce que ces frameworks soient bien maintenus dans le temps et soient capables d'accomoder les éventuelles évolutions de la Settings API. Voir des ressources [ici](#settings-api-frameworkstools).
 
 Dans tous les cas, avant d'utiliser des outils pour vous épargner beaucoup de travail redondant il est bien de le faire au moins une fois pour savoir qu'est ce qui vous ne plait pas pour trouver éventuellement le bon outil pour vous facilier la vie, ou créer le votre.
 
-### Walkthrough
-
-#### Creer une page d'options
-
-A venir
-
-#### Définir des options
+### Creer une page d'options
 
 ~~~php
+//creation d'un menu custom
+add_action('admin_menu','domain_create_menu');
+
+function domain_create_menu(){
+
+//creation d'un menu dans le menu de premier niveau 'Settings'
+add_options_page('Mon plugin','Mon plugin','manage_options','domain-options','domain_settings_page');
+
+//appeler la fonction pour enregistrer les settings
+add_action('admin_init','domain_settings_page_html');
+
+}
+~~~
+
+### Définir des options
+
+
+~~~php
+function domain_settings_page(){
 register_setting('domain-settings-group','domain_options','domain_sanitize_options');
+
+}
 ~~~
 
 `register_settings` définit les options qui seront manipulés sur la page d'options. Ces options seront enregistrées dans la table `wp_options` sous la forme de paires clé valeur.
 
-On va avoir plusieurs champs, plusieurs options à définir mais on va les enregistrer sous la même clef dans la table sous forme de tableau serialisé. Le premier paramètre est l'options group name, il permet d'identifier toutes les options. Le deuxième paramètre est important car c'est la clef sous laquelle sera enregistrée les options dans la table. Il doit être unique. Le troisième paramètre est la callback pour sanitizer les valeurs de nos options.
+On va avoir plusieurs champs, plusieurs options à définir mais on va les enregistrer sous la même clef dans la table sous forme de tableau serialisé. Le premier paramètre est l'`options group name`, il permet d'identifier toutes les options. Le deuxième paramètre est important car c'est la clef sous laquelle sera enregistrée les options dans la table. Il doit être unique. Le troisième paramètre est la callback pour sanitizer les valeurs de nos options.
+
+### Définir des sections
+
+~~~php
+function domain_settings_page(){
+	add_settings_section( 'domain-section-section1', 'Site', 'domain_setting_section1_html', 'domain-options' );
+
+}
+~~~
+
+On enregistre une section sur la page `domain-options` (id de la page). La callback `domain_setting_section1_html` sert à afficher du markup supplémentaire pour notre section (en général de l'aide).
+
+### Construire la page
+
+On définit notre fonction domain_settings_page_html qui va construire notre page d'options (markup)
+
+~~~php
+function domain_settings_page_html(){
+?>
+<div class="wrap">
+	<h2>Mon plugin</h2>
+	<form action="options.php" method="post">
+        // securité : creation auto de nonce par wordpress pour le groupe d'options
+		<?php settings_fields( 'domain-settings-group' ); ?>
+        // recuperer les options
+		<?php $adb_site_options = get_option( 'domain_options' ); ?>
+        // génération des sections présentes sur la page
+		<?php do_settings_sections( 'domain-options' ); ?>
+        // soumettre le formulaire
+		<p class="submit">
+			<?php submit_button( 'Enregistrer les changements' ); ?>
+		</p>
+	</form>
+</div>
+}
+<?php
+}
+~~~
 
 ## Plugins recommandés (dont semi officiels)
 
