@@ -976,12 +976,28 @@ add_action('admin_init','domain_settings_page_html');
 
 ~~~php
 function domain_settings_page(){
-register_setting('domain-settings-group','domain_options','domain_sanitize_options');
+register_setting(
+    'domain-settings-group',
+    'domain_options',
+    array(
+            //La valeur par défaut, tres important au premier lancement quand l'option n'existe
+            //pas encore en base, dit ce que get_option() doit retourner par défaut
+            'default' => array(
+				'domain_setting_tel' => '02 02 02 02 02',
+			),
+            // La fonction appelée après la soumission du formulaire, ici on clean et on valide
+			'sanitize_callback' => function ( array $input ) {
+                //Sanitize ici chaque champ
+                //$input['domain_setting_tel'] = filtrer($input)
+				return $input;
+			},
+    )
+);
 
 }
 ~~~
 
-`register_settings` définit les options qui seront manipulés sur la page d'options. Ces options seront enregistrées dans la table `wp_options` sous la forme de paires clé valeur.
+`register_settings` dit à l'Options API qu'elle va enregistrer quelque chose sous la clef `domain_options`. Ces options seront enregistrées dans la table `wp_options` sous la forme de paires clé valeur.
 
 On va avoir plusieurs champs, plusieurs options à définir mais on va les enregistrer sous la même clef dans la table sous forme de tableau serialisé. Le premier paramètre est l'`options group name`, il permet d'identifier toutes les options. Le deuxième paramètre est important car c'est la clef sous laquelle sera enregistrée les options dans la table. Il doit être unique. Le troisième paramètre est la callback pour sanitizer les valeurs de nos options.
 
@@ -989,16 +1005,80 @@ On va avoir plusieurs champs, plusieurs options à définir mais on va les enreg
 
 ~~~php
 function domain_settings_page(){
-	add_settings_section( 'domain-section-section1', 'Site', 'domain_setting_section1_html', 'domain-options' );
+
+	add_settings_section( 
+    'domain-section-section1', 
+    'Site', 
+    'domain_setting_section1_html', 
+    'domain-options' 
+);
 
 }
 ~~~
 
 On enregistre une section sur la page `domain-options` (id de la page). La callback `domain_setting_section1_html` sert à afficher du markup supplémentaire pour notre section (en général de l'aide).
 
+### Enregistrer les settings sur une section
+
+Pour boucler le tout on doit dire à la section quels settings (champs) elle va présenter. On le fait avec [`add_settings_field`](https://developer.wordpress.org/reference/functions/add_settings_field/). On enregistre ici un champ de numéro de téléphone que l'on appelera `domain_setting_tel`. Il sera enregistré comme une clef de l'option `domain_options`, enregistrée en base, qui est, je vous le rappelle, un tableau sérialisé.
+
+~~~php
+add_settings_field(
+		'mon_champ_id',
+		'Numéro de telephone',
+		'domain_settings_tel_callback',
+		'domain-options',
+		'domain-section',
+		array(
+			'label_for' => '',
+			'class'     => '',
+		)
+	);
+~~~
+
+Ok, je vous laisse consulter la doc pour savoir ce que tout ces arguments signifient. En gros, on dit j'enregistre un champ avec
+- `mon_champ_id` comme id du champ (pas vraiment important)
+- `Numéro de telephone` qui sera affiché comme label pour la champ
+- `domain_settings_tel_callback`, la callback pour ecrire notre input
+- `domain-options`, l'id ou slug de la page sur laquelle on enregistre le champ
+- `domain-section`, l'id ou slug de la section sur laquelle on enregistre le champ
+- `array()`, le dernier argument est en option, pour passer des trucs en plus à notre callback
+
+Vous remarquerez qu'on a pas utilisé ici le nom du champ `domain_setting_tel`. C'est parce que c'est une clef de l'option `domain_options`. Donc c'est à nous de joueur un peu avec la Settings API. Je sais c'est pas l'API la plus simple de Wordpress...
+
+### Ecrire le markup de notre champ (et subtilités)
+
+Bientôt fini, écrivons le markup de notre champ en définissant notre fonction `domain_settings_tel_callback`.
+
+~~~php
+/**
+ * Construit l'input domain_setting_tel
+ *
+ * @param array $input Données injectées via add_settings_field.
+ */
+function adb_setting_nb_max_featured_projects_callback( $input ) {
+
+    //On récuperer la valeur en base. Si elle existe pas encore, on récupere la valeur renseignée sous la clef 'default' dans `register_setting`
+	$values = get_option( 'domain_options' );
+	$value  = $values['domain_setting_tel'];
+	?>
+	<input 
+	id="domain_setting_tel_id"
+	type="text" 
+	name="<?php echo esc_attr( 'domain_options[domain_setting_tel]' ); ?>" 
+	value="<?php echo esc_attr( $value ); ?>"
+	>
+	<?php
+}
+~~~
+
+Voilà ! Quand on postera le formulaire, tout devrait bien se passer. La callback de sanitization devrait être appelée et ensuite l'option mise à jour en base. C'est la Settings API qui se charge de tout ça. Nous on doit juste bien cabler le tout.
+
+Il ne reste qu'à construire la page d'options à proprement dit.
+
 ### Construire la page
 
-On définit notre fonction domain_settings_page_html qui va construire notre page d'options (markup)
+On définit notre fonction `domain_settings_page_html` qui va construire notre page d'options (markup)
 
 ```php
 function domain_settings_page_html(){
@@ -1008,8 +1088,6 @@ function domain_settings_page_html(){
 	<form action="options.php" method="post">
         // securité : creation auto de nonce par wordpress pour le groupe d'options
 		<?php settings_fields( 'domain-settings-group' ); ?>
-        // recuperer les options
-		<?php $adb_site_options = get_option( 'domain_options' ); ?>
         // génération des sections présentes sur la page
 		<?php do_settings_sections( 'domain-options' ); ?>
         // soumettre le formulaire
@@ -1022,6 +1100,21 @@ function domain_settings_page_html(){
 <?php
 }
 ```
+De la magie a lieu ici sur plusieurs lignes
+
+- do_settings_sections( 'domain-options' ) : la Settings API va se charger de rendre tout le markup des sections et des champs qui y sont enregistrés.
+- settings_fields('domain-settings-group') : va intégrer des inputs cachés, des nonces, pour valider l'origine de la soumission du formulaire et nous protéger d'attaque CSRF. Rien à faire de plus de notre part.
+
+Quand on soumet, la Settings API se charge de
+
+- valider le nonce
+- valider/sanitizer chaque champ avec la déclaration de notre sanitize_callback
+- mettre à jour l'option en base et sauvegarder les inputs
+
+Voilà, un aperçu de la Settings API.
+
+Comme vous pouvez le voir c'est assez puissant mais c'est hyper verbeux et c'est facile de se perdre car elle est pas si intuitive que ça. Je recommande donc après l'avoir fait une fois de manière vanilla de s'écrire un petit plugin ou une petite fonction utils pour nous aider à préparer tout ça de manière beaucoup plus simple et efficace.
+
 
 ## Plugins recommandés (dont semi officiels)
 
