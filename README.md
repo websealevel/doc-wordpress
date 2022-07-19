@@ -74,7 +74,7 @@
 		- [Enregistrer les settings sur une section](#enregistrer-les-settings-sur-une-section)
 		- [Ecrire le markup de notre champ (et subtilités)](#ecrire-le-markup-de-notre-champ-et-subtilités)
 		- [Construire la page](#construire-la-page)
-	- [Plugins recommandés (dont semi officiels)](#plugins-recommandés-dont-semi-officiels)
+	- [Plugins recommandés](#plugins-recommandés)
 	- [Optimiser Wordpress (scalability et performances)](#optimiser-wordpress-scalability-et-performances)
 	- [Ressources](#ressources)
 		- [Doc officielle wordpress.org](#doc-officielle-wordpressorg)
@@ -170,9 +170,9 @@ Même que single, mais seulement pour le CPT posttype. Template pour afficher *u
 ### home.php
 
 - si on choisit pour la front page 'Your latest posts' on utilise `home.php`
-- toujours pas la page listant tous les posts (`mon-site/blog`), soit pour la page 'Posts page'.
+- si on choisit une page statique, on peut créer une page avec le slug 'blog' listant tous les posts (`mon-site/blog`), et l'affecter à la page 'Posts page'.
 
-En gros c'est pas compliqué : par défaut Wordpress nous met en home la liste des posts (`/` est pareil que `/blog`). Dans ce cas c'est `home.php` qui est appelée. Si on choisit de mettre une page static à la place, il faut aussi choisir une page pour la liste des posts. Et c'est toujours `home.php` qui s'en charge.
+En gros c'est pas compliqué : par défaut Wordpress nous met en home la liste des posts (`/`). Dans ce cas c'est `home.php` qui est appelée. Si on choisit de mettre une page static à la place, il faut aussi choisir une page pour la liste des posts. Et c'est toujours le template `home.php` qui s'en charge.
 
 - sert de fallback à : front-page 
 - fallback : [index](#index.php)
@@ -859,7 +859,7 @@ define( 'WP_AUTO_UPDATE_CORE', 'minor' );
 // Limite le nombre de revisions max pour un post.
 define( 'WP_POST_REVISIONS', 5 );
 // Limite l'intervalle entre 2 autosave en secondes. Par défaut 60s.
-define( 'AUTOSAVE_INTERNAL', 120 )
+define( 'AUTOSAVE_INTERNAL', 120 );
 // Memoire RAM max alloué à Wordpress par le serveur (si le host est d'accord)
 define('WP_MEMORY_LIMIT', '64MB');
 // Active le cache, utile pour certains plugins pour optimiser le site
@@ -1118,7 +1118,7 @@ Voilà, un aperçu de la Settings API.
 Comme vous pouvez le voir c'est assez puissant mais c'est hyper verbeux et c'est facile de se perdre car elle est pas si intuitive que ça. Je recommande donc après l'avoir fait une fois de manière vanilla de s'écrire un petit plugin ou une petite fonction utils pour nous aider à préparer tout ça de manière beaucoup plus simple et efficace.
 
 
-## Plugins recommandés (dont semi officiels)
+## Plugins recommandés
 
 - [W3 Total Cache](https://www.boldgrid.com/w3-total-cache/) : permet de mettre en cache les pages générés par Wordpress. Crée un dossier wp-content/cache et y stocke du html static généré par les requetes précédentes. La prochaine fois qu'une page est appelée, au lieu d'executer la loop et de faire des requetes a la base, wordpress sert la page static déjà générée. Ameliore le SEO, Lazy Image etc...
 - [BPS Security](https://forum.ait-pro.com/read-me-first/) : sécurité de Wordpress (alternative solide à Wordfence)
@@ -1159,6 +1159,13 @@ upload_max_filesize = 10M
 post_max_size = 48M
 max_execution_time = 600
 max_input_vars = 1000
+;Opcache
+opcache.memory_consumption=64
+opcache.interned_string_buffers=16
+opcache.max_accelerated_files=600
+opcache.validate_timestamps=0
+opcache.revalidate_freq=0
+opcache.fast_shutdown=1
 ~~~
 - mettre la table de `wp_comments` en InnoDB (adapté pour lecture de grands volumes) si MySql ou utiliser MariaDB
 ## Ressources
