@@ -71,6 +71,8 @@
 		- [Creer une page d'options](#creer-une-page-doptions)
 		- [Définir des options](#définir-des-options)
 		- [Définir des sections](#définir-des-sections)
+		- [Enregistrer les settings sur une section](#enregistrer-les-settings-sur-une-section)
+		- [Ecrire le markup de notre champ (et subtilités)](#ecrire-le-markup-de-notre-champ-et-subtilités)
 		- [Construire la page](#construire-la-page)
 	- [Plugins recommandés (dont semi officiels)](#plugins-recommandés-dont-semi-officiels)
 	- [Optimiser Wordpress (scalability et performances)](#optimiser-wordpress-scalability-et-performances)
@@ -1149,12 +1151,7 @@ RewriteRule \.(jpg|jpeg|png|gif)$ – [NC,F,L]
 ;security
 expose_php = Off
 ;performence
-register_globals = Off
-register_long_arrays = Off
-register_argv_argv = Off
-magic_quotes_gpc = Off
-magic_quotes_runtime = Off
-magic_quotes_sysbase = Off
+register_argc_argv = Off
 ;upload
 file_uploads = On
 memory_limit = 128M
