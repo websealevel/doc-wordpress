@@ -64,13 +64,13 @@ Un survol de la documentation WordPress et de quelques unes de ses API, de bonne
 	- [Search](#search)
 	- [Sécurité](#sécurité)
 		- [En bref](#en-bref)
-	- [Configuration](#configuration)
-		- [Quelques configures du `wp-config.php`](#quelques-configures-du-wp-configphp)
-		- [.htaccess](#htaccess)
-	- [Debugging](#debugging)
+		- [Configuration](#configuration)
+			- [Exemple de `wp-config.php`](#exemple-de-wp-configphp)
+			- [.htaccess (Apache)](#htaccess-apache)
+	- [Debug Mode](#debug-mode)
 	- [Maintenance](#maintenance)
-	- [Settings API : build your own administrative interfaces the core way](#settings-api--build-your-own-administrative-interfaces-the-core-way)
-		- [Creer une page d'options](#creer-une-page-doptions)
+	- [Settings API : *build your own administrative interfaces the core way*](#settings-api--build-your-own-administrative-interfaces-the-core-way)
+		- [Créer une page d'options](#créer-une-page-doptions)
 		- [Définir des options](#définir-des-options)
 		- [Définir des sections](#définir-des-sections)
 		- [Enregistrer les settings sur une section](#enregistrer-les-settings-sur-une-section)
@@ -865,9 +865,9 @@ ou
 - Forcer le SSL au login et aux admins avec `define('FORCE_SSL_LOGIN', true);` et `define('FORCE_SSL_ADMIN', true);`
 - Utiliser un plugin spécialisé en sécurtié comme [BulletProof Security (BPS)](https://forum.ait-pro.com/read-me-first/) ou WordFence.
   
-## Configuration
+### Configuration
 
-### Quelques configures du `wp-config.php`
+#### Exemple de `wp-config.php`
 
 ~~~php
 define('WP_ENVIRONMENT_TYPE', 'production');
@@ -894,7 +894,7 @@ define('FORCE_SSL_LOGIN', true);
 define('FORCE_SSL_ADMIN', true);
 ~~~
 
-### .htaccess
+#### .htaccess (Apache)
 
 Le fichier `.htaccess` est un fichier de configuration d'Apache. On peut y définir des règles et c'est là que réside la magie de wordpress
 
@@ -937,7 +937,7 @@ php_value error_log /public_html/php_errors.log
 
 où `error_log` est une valeur relative au *Document root* du serveur web Apache (du Virtual Host) et non la racine de l'installation de Wordpress.
 
-## Debugging
+## Debug Mode
 
 ~~~php
 // Active le mode debug - equivalent à  php_flag log_errors on
@@ -967,21 +967,21 @@ Il y a un mode maintenance natif à Wordpress. Il suffit de créer un fichier `.
 
 On peut customiser davantage cette page en créant un fichier `maintenance.php` dans le `wp-content`. Celui-ci prend la priorité sur le fichier `.maintenance`
 
-## Settings API : build your own administrative interfaces the core way
+## Settings API : *build your own administrative interfaces the core way*
 
-Utiliser pour développer des plugins et des pages d'administration/d'options custom contenant des formulaires. On peut faire vraiment tout ce qu'on veut avec et le fait d'utiliser cette méthode plutot que des hacks (notamment via des pages d'options ACF (PRO ONLY!)) : donnent plusieurs avantages
+Utiliser pour développer des plugins et des pages d'administration/d'options custom contenant des formulaires. On peut faire vraiment tout ce qu'on veut avec et le fait d'utiliser cette méthode plutôt que des "hacks" (notamment via des pages d'options ACF (PRO ONLY!)) : donnent plusieurs avantages
 
-- visual consistency
-- robustness and future proof
-- less work : handling form submission, security nonce, sanitizing data for free (une fois qu'on a compris comment ça marchait)
+- **Visual consistency** ;
+- **Robustness and future proof** ;
+- **Less work** : handling form submission, security nonce, sanitizing data for free (une fois qu'on a compris comment ça marchait).
 
-Cette API est très bien mais elle est vraiment pas intuitive et demande pas mal de code boilerplate pour être effective. Cela dit elle est native, supportée et encouragée pour développer des plugins, des pages d'options d'un thème de manière professionnelle.
+Cette API est très puissante mais elle n'est **vraiment pas intuitive** et demande pas mal de code *boilerplate* pour être effective. Cela dit elle est native, supportée et encouragée pour développer des plugins, des pages d'options d'un thème de manière professionnelle.
 
-Il y'a d'autres alternatives, comme des frameworks qui encapsulent tout ça mais comme tout usage de code tiers il faut faire attention à ce que ces frameworks soient bien maintenus dans le temps et soient capables d'accomoder les éventuelles évolutions de la Settings API. Voir des ressources [ici](#settings-api-frameworkstools).
+Il y'a d'autres alternatives, comme des frameworks qui encapsulent tout ça mais comme tout usage de code tiers il faut faire attention à ce que ces frameworks soient bien maintenus dans le temps et soient capables d'accomoder les éventuelles évolutions de la *Settings API* (Un jour ?). Voir des ressources [ici](#settings-api--frameworksplugins).
 
-Dans tous les cas, avant d'utiliser des outils pour vous épargner beaucoup de travail redondant il est bien de le faire au moins une fois pour savoir qu'est ce qui vous ne plait pas pour trouver éventuellement le bon outil pour vous facilier la vie, ou créer le votre.
+Dans tous les cas, avant d'utiliser des outils pour vous épargner beaucoup de travail redondant, il est bien de *le faire au moins une fois* pour savoir qu'est ce qui vous ne plait pas pour trouver, éventuellement, le bon outil afin de vous facilier la vie, ou encore mieux, créer le votre.
 
-### Creer une page d'options
+### Créer une page d'options
 
 ~~~php
 //creation d'un menu custom
