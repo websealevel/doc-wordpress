@@ -1,6 +1,7 @@
 # doc-wordpress
 
-[TOC]
+Un survol de la documentation WordPress et de quelques unes de ses API, de bonnes pratiques à adopter, conseils et références.
+
 - [doc-wordpress](#doc-wordpress)
 	- [Abréviations](#abréviations)
 	- [Must used plugins](#must-used-plugins)
