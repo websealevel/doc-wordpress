@@ -44,11 +44,11 @@ Un survol de la documentation WordPress et de quelques unes de ses API, de bonne
 	- [Validation, sanitization et échappement](#validation-sanitization-et-échappement)
 		- [Validation : Méthodologie proposée, exemple en PHP](#validation--méthodologie-proposée-exemple-en-php)
 		- [Sanitization dans Wordpress](#sanitization-dans-wordpress)
-	- [Échappemnt (output)](#échappemnt-output)
-		- [Pour envoyer des données vers le client (navigateur)](#pour-envoyer-des-données-vers-le-client-navigateur)
-		- [Pour envoyer des données vers une base de données](#pour-envoyer-des-données-vers-une-base-de-données)
-		- [Escaping dans Wordpress](#escaping-dans-wordpress)
-		- [Avec localization](#avec-localization)
+		- [Échappement (output)](#échappement-output)
+			- [Contexte HTML](#contexte-html)
+			- [Contexte SQL](#contexte-sql)
+			- [Dans Wordpress](#dans-wordpress)
+			- [Avec localization](#avec-localization)
 	- [Localization](#localization)
 	- [Javascript dependencies](#javascript-dependencies)
 		- [Jquery](#jquery)
@@ -622,7 +622,7 @@ sanitize_user()
 sanitize_url()
 ~~~
 
-## Échappemnt (output)
+### Échappement (output)
 
 **Très important.**
 
@@ -634,7 +634,7 @@ Processus en 3 étapes:
 - Échapper les outputs
 - Distinguer entre donnée échappée et non échappéé
 
-### Pour envoyer des données vers le client (navigateur)
+#### Contexte HTML
 
 [`htmlentities`](https://www.php.net/manual/fr/function.htmlentities.php) est la meilleure fonction native PHP pour échapper les données dans le contexte HTML. 
 
@@ -652,13 +652,13 @@ $html['username'] = htmlentities($clean['username'], ENT_QUOTES, 'UTF_8');
 echo "<p>Welcome back, {$html['username']}.</p>"
 ~~~
 
-### Pour envoyer des données vers une base de données
+#### Contexte SQL
 
 Utiliser l'API de WordPress pour faire des **requêtes préparées**.
 
-### Escaping dans Wordpress
+#### Dans Wordpress
 
-Wordpress met à disposition tout un tas de fonctions pour l'échappement. Vous n'aurez jamais besoin d'utiliser htmlentities directement.
+WordPress met à disposition tout un tas de fonctions pour l'échappement. Vous n'aurez jamais besoin d'utiliser htmlentities directement.
 
 *Output shoudl occured as late as possible*. Après que tous les filtres WP aient été appliquées. En gros, juste avant de l'echo sur la sortie standard.
 
@@ -672,8 +672,7 @@ Avant de renvoyer une donnée dans un script php sur la sortie standard, on veut
 
 [Voir la liste de fonctions utiles d'échappement](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-securing-output)
 
-
-### Avec localization
+#### Avec localization
 
 Voir [ici](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-with-localization)
 
