@@ -37,13 +37,13 @@
 			- [Outils SEO Wordpress](#outils-seo-wordpress)
 		- [Pagination](#pagination)
 		- [Divers](#divers)
-	- [template-parts](#template-parts)
+	- [Template-parts](#template-parts)
 	- [Post formats](#post-formats)
 		- [Usage](#usage)
-	- [Sanitization](#sanitization)
-		- [Méthodologie proposée, exemple en PHP](#méthodologie-proposée-exemple-en-php)
+	- [Validation, sanitization et échappement](#validation-sanitization-et-échappement)
+		- [Validation : Méthodologie proposée, exemple en PHP](#validation--méthodologie-proposée-exemple-en-php)
 		- [Sanitization dans Wordpress](#sanitization-dans-wordpress)
-	- [Escaping (output)](#escaping-output)
+	- [Échappemnt (output)](#échappemnt-output)
 		- [Pour envoyer des données vers le client (navigateur)](#pour-envoyer-des-données-vers-le-client-navigateur)
 		- [Pour envoyer des données vers une base de données](#pour-envoyer-des-données-vers-une-base-de-données)
 		- [Escaping dans Wordpress](#escaping-dans-wordpress)
@@ -62,6 +62,7 @@
 		- [Link tags](#link-tags)
 	- [Search](#search)
 	- [Sécurité](#sécurité)
+		- [En bref](#en-bref)
 	- [Configuration](#configuration)
 		- [Quelques configures du `wp-config.php`](#quelques-configures-du-wp-configphp)
 		- [.htaccess](#htaccess)
@@ -74,24 +75,23 @@
 		- [Enregistrer les settings sur une section](#enregistrer-les-settings-sur-une-section)
 		- [Ecrire le markup de notre champ (et subtilités)](#ecrire-le-markup-de-notre-champ-et-subtilités)
 		- [Construire la page](#construire-la-page)
-	- [Plugins recommandés](#plugins-recommandés)
+	- [Quelques plugins recommandés](#quelques-plugins-recommandés)
 	- [Optimiser Wordpress (scalability et performances)](#optimiser-wordpress-scalability-et-performances)
 	- [Ressources](#ressources)
 		- [Doc officielle wordpress.org](#doc-officielle-wordpressorg)
-		- [Hebergeurs dédiés (pour des sites en production)](#hebergeurs-dédiés-pour-des-sites-en-production)
 		- [Articles](#articles)
 			- [Taxonomies](#taxonomies-1)
 		- [Livres](#livres)
 		- [Podcasts](#podcasts)
-		- [Développement de thèmes](#développement-de-thèmes)
+		- [Starter themes](#starter-themes)
 		- [Développement de plugin](#développement-de-plugin)
-		- [Settings API Frameworks/Tools](#settings-api-frameworkstools)
+		- [Settings API : Frameworks/Plugins](#settings-api--frameworksplugins)
 		- [Custom Fields](#custom-fields)
 		- [Formations](#formations)
 			- [Gratuit](#gratuit)
 			- [Payant](#payant)
 				- [les bases](#les-bases)
-				- [les bases à avancé (hyper complet)](#les-bases-à-avancé-hyper-complet)
+				- [Les bases à avancé (hyper complet)](#les-bases-à-avancé-hyper-complet)
 ## Abréviations
 
 - CPT: Custom Post Type
@@ -107,10 +107,10 @@ Dans le dossier `wp-content/mu-plugins`
 
 Problèmes
 
-- ils n'apparaissent pas les notifs de mise a jour. C'est à nous de penser à les update
+- ils n'apparaissent pas dans les notifs de mise a jour. C'est à nous de penser à les update
 - les hooks d'activation et de desactivation ne sont pas executés pour les must used plugins
 
-En gros, *à utiliser avec parcimonie*. Il vaut mieux y mettre des plugins qui bougent pas trop, autonomes et isolés, surtout pour monitorer le site je dirai.
+En gros, *à utiliser avec parcimonie*. Il vaut mieux y mettre des plugins qui bougent pas trop, autonomes et isolés.
 
 ## CPT(Custom Post Types) et CT (Custom Taxonomies)
 
@@ -118,7 +118,7 @@ Les CPT et CT **sont de préférence déclarés dans un plugin**. Je préfère l
 
 ## Template hierarchy
 
-**Hyper important !**
+**Important !**
 
 La [hierarchie](https://developer.wordpress.org/themes/basics/template-hierarchy/) des templates wordpress, et leur fallbacks (quel template est appelé si celui demandé n'est pas trouvé).
 
@@ -361,15 +361,18 @@ Template pour liste de tous les items d'une CT.
 
 Les taxonomies sont des catégories qui permettent de regrouper les posts et de créer des liens entre eux.
 
-Par défaut, un post standard aura accès à deux types de taxonomy (builtin wp) `Categories` (hierarchical cad que les *terms peuvent avoir aussi des enfants*) and `Tags`(non hierarchical cad que *les terms ne peuvent pas avoir d'enfants*).
+Par défaut, un post standard aura accès à deux taxonomies (crée à l'installation par WordPress) :
 
-Ces deux taxos sont incluses dans Wordpress par défaut. Mais on peut les supprimer si on veut. Y'en a 4 en tout si on compte les `Link Categories` (catégorie pour les liens) et les `Post_Format Categories` (pour les types de post en fonction de leur mimetype).
+- `Categories` (hierarchical cad que les *terms peuvent avoir aussi des enfants*);
+- `Tags`(non hierarchical cad que *les terms ne peuvent pas avoir d'enfants*).
 
-Les taxonomies sont les parents, les `terms` sont les enfants.
+Ces deux taxonomies sont incluses dans Wordpress par défaut pour les *posts*. Mais on peut les supprimer si on veut. Il y'en a quatre en tout, si on compte les `Link Categories` (catégorie pour les liens) et les `Post_Format Categories` (pour les types de post en fonction de leur *mimetype*).
+
+Les termes (terms) sont le éléments d'une taxonomie. Ils peuvent avoir un terme parent (*hierarchical*) ou non.
 
 ### Taxonomy hierarchy
 
-A lire du haut vers le bas pour voir le flow du templating. Valable pour les taxonomies par défaut (voir la hierarchie général des templates)
+A lire du haut vers le bas pour voir le *flow* du templating. Valable pour les taxonomies par défaut (voir la hierarchie général des templates) :
 
 ~~~
 - taxonomy-{taxonomy}-{term}.php
@@ -380,7 +383,7 @@ A lire du haut vers le bas pour voir le flow du templating. Valable pour les tax
 - category-{ID}.php
 ~~~
 
-Si on l'applique à la taxonomy `Categories` (slug `category`)
+Si on l'applique à la taxonomy `Categories` (slug `category`) :
 
 ~~~
 - category-{slug}.php
@@ -390,7 +393,7 @@ Si on l'applique à la taxonomy `Categories` (slug `category`)
 - index.php
 ~~~
 
-Si on l'applique à la taxonomy `tags` (slug `tag`)
+Si on l'applique à la taxonomy `tags` (slug `tag`) :
 
 ~~~
 - tag-{slug}.php
@@ -404,7 +407,7 @@ Si on l'applique à la taxonomy `tags` (slug `tag`)
 
 On peut créer nos propres taxonomies avec `register_taxonomy( '${slug taxonomy}', array( 'posttype' ), $args )`.
 
-Si on applique la hierarchie à la taxonomy custom 
+Si on applique la hierarchie à la taxonomy custom :
 
 ~~~
 - taxonomy-{taxonomy}-{term}.php
@@ -421,13 +424,13 @@ Prendre des précautions [lorsqu'on choisit un nom pour la taxonomy](https://dev
 
 On a par défaut les taxonomies `Catégories` (slug `category`) et `Etiquettes` (slug `tag`) pour les articles (slug `post`). Par défaut on a un *term* "Uncategorized" pour la *taxonomie* `category` et un term "Tags" pour la taxonomie `tag`.
 
-Donc par défaut pour accéder a la liste des posts `uncategorized` l'url sera 
+Donc par défaut pour accéder à la liste des posts `uncategorized` l'url sera :
 
 ~~~
 {`mon-domaine}/category/uncategoried`
 ~~~
 
-De même, pour accéder a la liste des posts étiquettés `Tags` l'url sera
+De même, pour accéder à la liste des posts étiquetés `Tags` l'url sera :
 
 ~~~
 {`mon-domaine}/tag/tags`
@@ -435,7 +438,7 @@ De même, pour accéder a la liste des posts étiquettés `Tags` l'url sera
 
 On peut changer le slug `category` et `tag` par défaut par un autre dans `Settings/Permalinks/Optional`.
 
-Pour les taxonomies custom. Imaginons on a créé un CPT `projet` et une CT `savoir-faire` avec un terme 'ebenisterie'. Comment lister tous les projets d'ébenisterie ?
+Pour les taxonomies custom. Imaginons que l'on ait créé un CPT `projet` et une CT `savoir-faire` avec un terme 'ebenisterie'. Comment lister tous les projets d'ébenisterie ?
 
 ~~~
 {`mon-domaine}/savoir-faire/ebenisterie`
@@ -444,41 +447,44 @@ Pour les taxonomies custom. Imaginons on a créé un CPT `projet` et une CT `sav
 
 ### Permalinks (SEO)
 
-Le permalink dans Wordpress c'est l'URL entière d'une page (incluant le protocole, le nom de domain).
+Le *permalink* dans Wordpress c'est l'**URL** entière d'une ressource (incluant le protocole et le nom de domaine).
 
-Le SEO ou Ranking de vos contenus parmi les résulats retournés par votre navigateur est hyper important si vous voulez être trouvé. Qui va sur la 2eme page de Google resultats ? (Montrer stat)
+Le *SEO* ou Ranking de vos contenus parmi les résulats retournés par votre navigateur est hyper important si vous voulez être trouvé. Qui va sur la 2eme page de Google résultats ? (Montrer stat)
 
-Le SEO c'est souvent de l'arnaque et de la magie noire (ca depend par exemple de code propriétaire du moteur de Google et les règles peuvent changer très vite) mais c'est important. Et il y a quand même des règles stables dans le temps.
+Le SEO c'est souvent de la magie noire (ça depend par exemple de code propriétaire du moteur de Google et les règles peuvent changer très vite) mais c'est *important*. Et *il y a quand même des règles* stables dans le temps.
 
-Essayer de prévoir le SEO `avant` de commencer le développement ou la mise en prod de votre site. Cela vous aidera a la structuration de vos pages. Le faire après peut devenir vite compliqué voire impossible (croyez moi).
+Essayer de prévoir le SEO `avant` de commencer le développement ou la mise en prod de votre site. Cela vous aidera a la structuration de vos pages. Le faire après peut devenir vite compliqué voire impossible.
+
+Un site bien structuré avec taxonomie et types de posts, des url bien formées et bien nommées, des métadonnées pour les pages et du **contenu de qualité** est la base du SEO.
 
 #### Slug
 
-Les slug sont la dernière partie de l'url, par exemple dans `example.com/about-us` le slug est `about-us`. Dans `example.com/?p=356` il n'y a pas de 
+Les slug sont la dernière partie de l'URL (*path*), par exemple dans `example.com/about-us` le slug est `about-us`. Dans `example.com/?p=356` il n'y a pas de slug. L'URL est la ressource racine (/) modulée par un query parameter (`p`).
 
-Toujours utiliser `Post name`: plus comphrénsible, SEO friendly
+**Toujours utiliser** `Post name`: plus compréhensible, SEO friendly
 
-- search engines use your URL to determine what your page or content page is all about. And if they found your permalink related to the content or page, the search engines find it genuine and legitimate to give them priority in their search engine rankings.
+- Les moteurs de recherche utilisent votre URL pour déterminer de quoi traite votre page ou votre contenu. Et s'ils trouvent que votre permalien est en lien avec le contenu ou la page, les moteurs de recherche le considèrent comme authentique et légitime, ce qui leur donne la priorité dans les résultats de recherche.
 
-- Using SEO keywords in your URL can help you rank for your target keywords. Google uses the URL as a factor in ranking your page, so if the URL slug includes your keywords, then Google will be more likely to rank it.
+- L'utilisation de mots-clés SEO dans votre URL peut vous aider à vous positionner sur vos mots-clés cibles. Google utilise l'URL comme un facteur pour classer votre page, donc si le slug de l'URL inclut vos mots-clés, Google sera plus enclin à la référencer.
 
 #### URL best practices
 
-- use HTTPS
-- nom de domaine clair et unique
-- keep it short and precise (concis). Le poids des derniers mots pour les bots crawlers est plus faible
-- lisible pour les robots **et** pour les humains
-- utiliser des sous-domaine: `sous-domaine.mon-domaine.com`
-- placer des mots clefs qui décrivent le contenu de la page
-- eviter de mettre une année dans l'URL
-- eviter la duplication d'URL sur votre site
-- The best time to change a permalink is *when* you’re originally creating the post content `before` the post is published. Why? If you change a post’s slug after it has already been published, beware that you’re also changing the post’s URL, so the permalink change may create a 404 page. Any links that have been shared online using the old URL will not work any longer and will need to have redirects set up to the new URL. By customizing your post slug prior to publishing the content, you’ll have an optimized permalink the second your hit the publish button.
-- consistent structure sur tout le site 
+- Utiliser le protocole HTTPS ;
+- Nom de domaine clair ;
+- *Keep it short and precise* (url concises). Le poids des derniers mots pour les *bots crawlers* est plus faible
+- Lisible pour les robots **et** pour les humains
+- Utiliser des sous-domaines : `sous-domaine.mon-domaine.com`
+- Placer des mots clefs qui décrivent le contenu de la page
+- Éviter de mettre une année dans l'URL
+- Éviter la duplication d'URL sur votre site
+- Le meilleur moment pour modifier un *permalien* est **lorsque vous créez initialement le contenu du post**, **avant que le post ne soit publié**. Pourquoi ? Si vous changez le *slug* d’un post après sa publication, attention : vous modifiez également l’URL du post, ce qui peut entraîner une page 404. **Tous les liens partagés en ligne utilisant l’ancienne URL ne fonctionneront plus et devront être redirigés vers la nouvelle URL**. En personnalisant le slug de votre post avant de publier le contenu, vous aurez un permalien optimisé dès que vous appuierez sur le bouton *Publier*;
+- Structure d'URL cohérente et uniforme sur tout le site 
 
 
 #### Outils SEO Wordpress
 
- - plugin [Yoast](https://yoast.com/), un des plugins les plus installés et maintenu de l'écosystème de Wordpress. Gratuit possible, user friendly pour vos administrateurs de contenus (clients). Ne pas hésiter à  l'installer.
+ - [Yoast](https://yoast.com/), un des plugins les plus installés et maintenu de l'écosystème de Wordpress. Gratuit possible, *user friendly* pour vos administrateur·ices de contenus (clients). Ne pas hésiter à l'installer.
+ - [SEOKey](https://www.seo-key.fr/), plugin français de SEO réputé pour sa qualité.
 
 
 ### Pagination
@@ -493,7 +499,7 @@ Toujours utiliser `Post name`: plus comphrénsible, SEO friendly
     - `true`, traite la taxo comme une catégorie (liste d'items prédéfinis),
     - `false` traite la taxo comme un tag. On rentre des termes séparés par des virgules sur chaque post à la volée. 
 
-Si l'on ne souhaite pas avoir une taxonomie hierarchique et que l'on désire quand même avoir les checkboxs (c'est quand même plus cool) on peut utiliser le paramètre `meta_box_cb`
+Si l'on ne souhaite pas avoir une taxonomie hiérarchique et que l'on désire quand même avoir les *checkboxs* (c'est quand même plus sympa) on peut utiliser le paramètre `meta_box_cb` :
 
 ~~~php
 $args = array(
@@ -501,10 +507,10 @@ $args = array(
 		// utilise les metabox de post comme pour la taxonomy hierarchique 'category'
 		'meta_box_cb'       => 'post_categories_meta_box',
 	);
-register_taxonomy( 'action', array( 'projet' ), $args );
+register_taxonomy( 'action', array( 'ma_taxonomie' ), $args );
 ~~~
 
-## template-parts
+## Template-parts
 
 On crée en général un dossier `template-parts` à la racine du thème. On y stocke tout template html de contenu. Par exemple
 
@@ -512,8 +518,9 @@ On crée en général un dossier `template-parts` à la racine du thème. On y s
 - `template-parts/content-page.php` pour le contenu d'une page
 - etc...
 
-Par exemple, le contenu de `content.php`
-~~~html
+Par exemple, le contenu de `content.php` :
+
+~~~php
 <?php 
 /**
  * Contenu d'un post
@@ -529,7 +536,7 @@ Par exemple, le contenu de `content.php`
 </article>
 ~~~
 
-On l'appelle ensuite avec la fonction `get_template_part({path du fichier content},{ce qui suit le -}` dans la main loop. Par exemple
+On l'appelle ensuite avec la fonction `get_template_part({path du fichier content},{ce qui suit le -}` dans la *main loop*. Par exemple :
 
 ~~~php
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
@@ -541,7 +548,7 @@ On l'appelle ensuite avec la fonction `get_template_part({path du fichier conten
 
 ## [Post formats](https://wordpress.org/support/article/post-formats/)
 
-Pour présenter différents types de posts de manière différente. Les formats sont des sortes de métadonnées sur les posts. Par défaut un post a le format `standard`. Utile pour utiliser des template-parts en fonction d'une méta (ex: vidéo, comment etc...)
+Pour présenter différents types de posts de manière différente. Les formats sont des sortes de métadonnées sur les posts. Par défaut un post a le format `standard`. Utile pour utiliser des *template-parts* en fonction d'une méta (ex: vidéo, comment etc...)
 
 Les noms des formats match les noms des dashicons.
 
@@ -561,69 +568,81 @@ Les post-formats ont un [template dans la hierarchie](https://developer.wordpres
 
 Mais à utiliser *davantage pour le style que pour du templating*. On peut par exemple définir un `content-{format}.php` dans nos `template-parts` et charger un template différent en fonction du format.
 
-A utiliser pour le format `quote` pour les `testimonials` par exemple, au lieu d'un CPT !
+À utiliser pour le format `quote` pour les `testimonials` par exemple, au lieu d'un CPT !
 
+## Validation, sanitization et échappement
 
-## Sanitization
+*Process of cleaning or filtering your input data*
 
-Process of cleaning or filtering your input data. On parle aussi de sanitazing, validating, filtering, cleaning... Même si on peut dire qu'il y a des différences entre ces termes globalement ils veulent tous dire "preventing invalid from **entering** your application.
+On parle aussi de *sanitazing*, validating, filtering, cleaning... Même si on peut dire qu'il y a des différences entre ces termes globalement ils veulent tous dire "preventing invalid from **entering** your application.
 
-Il y a plusieurs approches pour sanitize les données en entrée et certaines sont plus sécurisées que d'autres.
+### Validation : Méthodologie proposée, exemple en PHP
 
-La meilleure approche est de concevoir ce processus comme un processus **d'inspection**. N'essaie pas de corriger des données invalides, force les utilisateurs à jouer selon tes règles. L'histoire a montré que la tentative de corriger des données invalides a mené à des vulnérabilités. 
-
-Avoir une whitelist approach : on fait l'hypothèse que toute donnée qui arrive est invalide sauf si on peut prouver qu'elle ne l'est pas. Ainsi, l'erreur qu'on risque de faire c'est d'invalider une donnée valide. Ce qui est facheux mais moins que l'inverse.
-
-### Méthodologie proposée, exemple en PHP
+Compare la donnée à une liste de données acceptées (inputs *fermés*). **Le cas idéal**, à privilégier dès que possible.
 
 Un ensemble de données `$data` arrive.
 
-- crée un tableau $clean vide. Ce tableau ne contiendra que des données dont on est sûrs qu'elles ont été validées.
-- creer un ensemble de **regles de validation** que $data doit passer avant de se retrouver dans $clean.
-- privilégier des fonctions builtin quand c'est possible (plus sur que votre code)
-- identifier l'input (donnée considérée comme invalide et sale)
-- valider l'input
-- distinguer entre donnée sale et donné valide
+- Crée un tableau $clean vide. Ce tableau ne contiendra que des données dont on est sûrs qu'elles ont été validées.
+- Creer un ensemble de **regles de validation** que $data doit passer avant de se retrouver dans $clean.
+- Privilégier des fonctions builtin quand c'est possible (plus sur que votre code)
+- Identifier l'input (donnée considérée comme invalide et sale)
+- Valider l'input
+- Distinguer entre donnée sale et donné valide
 
 ### Sanitization dans Wordpress
 
-Sanitize strips ou modifie les data, c'est a dire qu'il modifie l'entrée. C'est donc du filtre qui peut ouvrir vers des vulnérabilités. Il faut faire confiance à une fonction maintenue par une communauté depuis 20ans.
+Sanitize strips ou modifie les data, c'est a dire qu'il **modifie la donnée**. 
 
-- sanitize_text_field
-- sanitize_title
-- sanitize_email
-- sanitize_html_class
-- esc_url_raw : enleve caracteres invalides dans une url
-- sanitize_user
-- sanitize_option
-- sanitize_meta
+C'est donc du filtre qui peut ouvrir vers des vulnérabilités. Il faut faire confiance à une fonction maintenue par une communauté depuis 20ans.
 
-## Escaping (output)
+[Fonctions offertes par WordPress](https://developer.wordpress.org/apis/security/sanitizing/#sanitization-functions) :
 
-Escaping output : échaper ou encoder des caractères pour être sûrs que leur signification originale est preservée, et eviter d'envoyer un résultat dangereux à un système exterieur à votre site/application (navigateur, base de données, url).
+~~~php
+sanitize_email()
+sanitize_file_name()
+sanitize_hex_color()
+sanitize_hex_color_no_hash()
+sanitize_html_class()
+sanitize_key()
+sanitize_meta()
+sanitize_mime_type()
+sanitize_option()
+sanitize_sql_orderby()
+sanitize_term()
+sanitize_term_field()
+sanitize_text_field()
+sanitize_textarea_field()
+sanitize_title()
+sanitize_title_for_query()
+sanitize_title_with_dashes()
+sanitize_user()
+sanitize_url()
+~~~
 
-Pareil que pour la sanitization, on fait l'assomption que toute donnée peut etre malveillante (meme si on a validé).
+## Échappemnt (output)
 
-Escaping output est aussi en 3 étaps:
+**Très important.**
 
-- identifier les output
-- échapper les outputs
-- distinguer entre donnée échappée et non échappéé
+Échaper ou encoder des caractères pour être sûr que leur signification originale est préservée sans que ces caractères soient interprétés dans le contexte donné (HTML, SQL, etc.)
+
+Processus en 3 étapes:
+
+- Identifier les output
+- Échapper les outputs
+- Distinguer entre donnée échappée et non échappéé
 
 ### Pour envoyer des données vers le client (navigateur)
 
-[`htmlentities`](https://www.php.net/manual/fr/function.htmlentities.php) est la meilleure fonction. Prend en entrée une string et retourne une version modifiée de telle sorte que certains caractères ne seront pas intérpretés par le navigateur (balises html ou scrit, "<" ). htmlentities accepte des arguments qui permettent de définir les règles d'échappement et le character set qui doit correspondre à celui indiqué dans le header Content-Type de votre requête réponse au client.
+[`htmlentities`](https://www.php.net/manual/fr/function.htmlentities.php) est la meilleure fonction native PHP pour échapper les données dans le contexte HTML. 
 
-En gros utilisez toujours `htmlentities($donnée_a_echaper, ENT_QUOTES, 'UTF_8')`.
-
-Un exemple
+Un exemple :
 
 ~~~php
 
 //identification de notre sortie
 $html=array();
 
-//echappement
+//échappement
 $html['username'] = htmlentities($clean['username'], ENT_QUOTES, 'UTF_8');
 
 //servi au client
@@ -632,18 +651,13 @@ echo "<p>Welcome back, {$html['username']}.</p>"
 
 ### Pour envoyer des données vers une base de données
 
- - utiliser une fonction native à votre base de données (implementée pour elle)
- - mysqli::real_escape_string
- - **PDO**, nouveau standard dans PHP. Pour des requetes préparées.
+Utiliser l'API de WordPress pour faire des **requêtes préparées**.
 
 ### Escaping dans Wordpress
 
-Wordpress met à disposition tout un tas de fonctions pour l'échappement. Vous n'aurez surement jamais besoin d'utiliser htmlentities directement.
+Wordpress met à disposition tout un tas de fonctions pour l'échappement. Vous n'aurez jamais besoin d'utiliser htmlentities directement.
 
 *Output shoudl occured as late as possible*. Après que tous les filtres WP aient été appliquées. En gros, juste avant de l'echo sur la sortie standard.
-
-
-Les fonctions strip aussi les données (modifient)
 
 - **esc_html** : a utiliser à la place de htmlentities
 - esc_url: converse caracteres dans encoding url
@@ -651,9 +665,10 @@ Les fonctions strip aussi les données (modifient)
 - esc_attr: clean les attributs d'element html
 - esc_textarea: pareil que esc_html mais dans un text area
 
-Avant de renvoyer une donnée dans un script php sur la sortie standard, on veut être sûr de pas envoyer du code malfaisant au client, et éviter du cross-site-scripting (XSS). Une [liste de fonctions utils](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-securing-output)
+Avant de renvoyer une donnée dans un script php sur la sortie standard, on veut être sûr de pas envoyer du code malfaisant au client, et éviter du cross-site-scripting (XSS). 
 
-- `esc_html()`: a utiliser pour recuperer des données dans un élément html
+[Voir la liste de fonctions utiles d'échappement](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-securing-output)
+
 
 ### Avec localization
 
@@ -680,7 +695,7 @@ Pour la traduction.
 - _e : translate and echo (pas d'escape)
 - __ : translate et retourne (pas d'escape)
 
-Toutes ces fonctions prennent deux arguments
+Toutes ces fonctions prennent deux arguments :
 
 ~~~php
 _e('text a traduire', 'nom-**unique**-de-domaine');
@@ -692,13 +707,13 @@ Voir ce [lien](https://developer.wordpress.org/apis/handbook/internationalizatio
 
 ## Javascript dependencies
 
-Si on regarde la page du codex de la fonction [wp_enqueue_scripts](https://developer.wordpress.org/reference/functions/wp_enqueue_script/#default-scripts-and-js-libraries-included-and-registered-by-wordpress) on peut voir toutes les dépendences JS du coeur de Wordpress (utilisé côté admin). 
+Si on regarde la documentation de la fonction [wp_enqueue_scripts](https://developer.wordpress.org/reference/functions/wp_enqueue_script/#default-scripts-and-js-libraries-included-and-registered-by-wordpress) on peut voir toutes les dépendances JS du coeur de Wordpress (utilisé côté *admin*). 
 
 Si on a besoin de l'une de ces librairies **on a pas besoin de les importer explicitement dans notre projet**. Il suffit de copier leur slug dans le tableau `$deps` passé en argument de `wp_enqueue_scripts`.
 
 ### Jquery
 
-Si on veut par exemple embarquer `jquery` sur nos pages webs servies au client 
+Si on veut par exemple embarquer `jquery` sur nos pages webs servies au client :
 
 ~~~php
 wp_enqueue_script( 'main-script', get_stylesheet_directory_uri() . '/js/scripts.min.js', array( 'jquery' ), $js_version, true );
@@ -706,12 +721,13 @@ wp_enqueue_script( 'main-script', get_stylesheet_directory_uri() . '/js/scripts.
 
 Dans notre fichier `main-script.js` si on veut utiliser jquery, **il ne faut pas utiliser le signe $ car il peut rentrer en conflit avec d'autres library**.
 
-Donc au lieu d'écrire
+Donc au lieu d'écrire :
+
 ~~~javascript
 $('.single-projet)
 ~~~
 
-on écrira
+on écrira :
 
 ~~~javascript
 jQuery('.single-projet)
@@ -828,37 +844,43 @@ ou
 
 ## Sécurité
 
-****### En bref
+### En bref
 
-- rester à jour (core, plugins, themes)
-- modifier le prefixe des tables de wordpress, ne pas utiliser `wp_`
-- limiter les tentatives de login
-- faire une whitelist des IP qui peuvent se connecter en tant qu'admin (dans le .htaccess)
-- utiliser des mots de passe forts
-- déplacer le fichier de configuration `wp-config.php` en dehors de l'install de wordpress. On peut le placer en dehors du root de Wordpress. Wordpress va checker automatiquement le dossier parent s'il trouve pas le wp-config dans son dossier d'install. Sur Apache, pour eviter qu'on puisse acceder au `wp-config.php` en plain/text (suite a un bug) on peut rajouter la regle `<FileMatch ^wp-config.php$>deny from all</FilesMatch>` au `.htaccess`
-- deplacer le repertoire wp-content ailleurs que dans l'install de wordpress. Cela ne rend pas le site plus secure mais ça permet d'échapper à bcp de scripts d'attaque car la structure ne sera plus standard. Ajouter dans le `wp-config.php` 
+- Rester à jour (core, plugins, themes)
+- Modifier le prefixe des tables de wordpress, ne pas utiliser `wp_`
+- Limiter les tentatives de login
+- Faire une whitelist des IP qui peuvent se connecter en tant qu'admin (dans le .htaccess)
+- Utiliser des mots de passe forts
+- Déplacer le fichier de configuration `wp-config.php` en dehors de l'install de wordpress. On peut le placer en dehors du root de Wordpress. Wordpress va checker automatiquement le dossier parent s'il trouve pas le wp-config dans son dossier d'install. Sur Apache, pour eviter qu'on puisse acceder au `wp-config.php` en plain/text (suite a un bug) on peut rajouter la regle `<FileMatch ^wp-config.php$>deny from all</FilesMatch>` au `.htaccess`
+- Deplacer le repertoire wp-content ailleurs que dans l'install de wordpress. Cela ne rend pas le site plus secure mais ça permet d'échapper à bcp de scripts d'attaque car la structure ne sera plus standard. Ajouter dans le `wp-config.php` 
     ~~~php
     define('WP_CONTENT_DIR', $_SERVER['DOCUMENT_ROOT'] . '/mon-site/wp-content';
     define('WP_CONTENT_URL', 'http://example/com/mon-site/wp-content');
     define('WP_PLUGIN_URL', 'http://example.com/mon-site/wp-content/plugins');
     ~~~
-- utiliser les rôles
-- utiliser les salts
-- forcer le SSL au login et aux admins avec `define('FORCE_SSL_LOGIN', true);` et `define('FORCE_SSL_ADMIN', true);`
-- utiliser un plugin spécialisé en sécurtié comme [BulletProof Security (BPS)](https://forum.ait-pro.com/read-me-first/), Wordfrence Security
+- Utiliser les rôles (*least privileges)
+- Utiliser les salts
+- Forcer le SSL au login et aux admins avec `define('FORCE_SSL_LOGIN', true);` et `define('FORCE_SSL_ADMIN', true);`
+- Utiliser un plugin spécialisé en sécurtié comme [BulletProof Security (BPS)](https://forum.ait-pro.com/read-me-first/) ou WordFence.
   
 ## Configuration
 
 ### Quelques configures du `wp-config.php`
 
 ~~~php
+define('WP_ENVIRONMENT_TYPE', 'production');
+define('WP_DEBUG', true);          // Activé pour que les erreurs soient loguées
+define('WP_DEBUG_LOG', true);      // Consigne les erreurs dans wp-content/debug.log
+define('WP_DEBUG_DISPLAY', false); // RIEN AFFICHER SUR LA SORTIE (ECRAN)
+define('SAVEQUERIES', false);      // Surtout pas !
+define('SCRIPT_DEBUG', false);     // Désactive le chargement de assets du core non minifiées
 // Active/Desactive toutes les maj auto (core, themes, plugins, translations).
 define( 'AUTOMATIC_UPDATED_DISABLED', false );
 // Maj auto pour le core de wp seulement: false, true ou minor.
 define( 'WP_AUTO_UPDATE_CORE', 'minor' );
 // Limite le nombre de revisions max pour un post.
-define( 'WP_POST_REVISIONS', 5 );
-// Limite l'intervalle entre 2 autosave en secondes. Par défaut 60s.
+define( 'WP_POST_REVISIONS', 3 );
+// Limite l'intervalle entre 2 autosave de l'éditeur en secondes. Par défaut 60s.
 define( 'AUTOSAVE_INTERNAL', 120 );
 // Memoire RAM max alloué à Wordpress par le serveur (si le host est d'accord)
 define('WP_MEMORY_LIMIT', '64MB');
@@ -866,7 +888,7 @@ define('WP_MEMORY_LIMIT', '64MB');
 define('WP_CACHE', true);
 //Forcer le SSL pour le login
 define('FORCE_SSL_LOGIN', true);
-//Forcer le SSL pour servir toutes les pages d'admin (/wp-admin). Ralentit le chargement des pages d'admin mais assure l'encryption de toutes les données.
+//Forcer le SSL pour servir toutes les pages d'admin (/wp-admin). Ralentit le chargement des pages d'admin mais assure le chiffrement de toutes les données.
 define('FORCE_SSL_ADMIN', true);
 ~~~
 
@@ -899,9 +921,9 @@ deny from all
 allow from xxx.xxx.xxx.xxx.
 ~~~~
 
-Ainsi, seule une liste blanche d'IP d'amin peuvent se connecter en tant qu'admin au Wordpress. Si l'admin a une nouvelle IP il suffit de l'ajouter à la liste.
+Ainsi, seule une liste blanche d'IP d'admin peuvent se connecter en tant qu'admin au Wordpress. Si l'admin a une nouvelle IP il suffit de l'ajouter à la liste.
 
-Configuration de log d'erreur pour un site en production directement dans le .htaccess
+Configuration de log d'erreur pour un site en production directement dans le `.htaccess` :
 
 ~~~.htaccess
 php_flag display_startup_errors off
@@ -910,7 +932,8 @@ php_flag html_errors off
 php_flag log_errors on
 php_value error_log /public_html/php_errors.log
 ~~~
-où `error_log` est une valeur relative au document root du web server (du Virtual Host) et non la racine de l'install de Wordpress.
+
+où `error_log` est une valeur relative au *Document root* du serveur web Apache (du Virtual Host) et non la racine de l'installation de Wordpress.
 
 ## Debugging
 
@@ -918,7 +941,7 @@ où `error_log` est une valeur relative au document root du web server (du Virtu
 // Active le mode debug - equivalent à  php_flag log_errors on
 define( 'WP_DEBUG', true );
 // Ne pas afficher les messages d'erreur sur la sortie standard.
-define( 'WP_DEBUG_DISPLAY', false );
+define( 'WP_DEBUG_DISPLAY', true );
 // Log les erreurs dans le fichier debug.log.
 define( 'WP_DEBUG_LOG', true );
 // Log toutes les requetes vers la db dans un tableau,
@@ -1104,34 +1127,36 @@ function domain_settings_page_html(){
 ```
 De la magie a lieu ici sur plusieurs lignes
 
-- do_settings_sections( 'domain-options' ) : la Settings API va se charger de rendre tout le markup des sections et des champs qui y sont enregistrés.
-- settings_fields('domain-settings-group') : va intégrer des inputs cachés, des nonces, pour valider l'origine de la soumission du formulaire et nous protéger d'attaque CSRF. Rien à faire de plus de notre part.
+- `do_settings_sections( 'domain-options')` : la Settings API rend tout le markup des sections et des champs qui y sont enregistrés ;
+- `settings_fields('domain-settings-group')` : va intégrer des inputs cachés, des nonces, pour valider l'origine de la soumission du formulaire et nous protéger d'attaque CSRF. Rien à faire de plus de notre part.
 
-Quand on soumet, la Settings API se charge de
+Quand on soumet un formulaire de settings, la Settings API se charge de :
 
-- valider le nonce
-- valider/sanitizer chaque champ avec la déclaration de notre sanitize_callback
-- mettre à jour l'option en base et sauvegarder les inputs
+- Valider le nonce ;
+- Valider/sanitizer chaque champ avec la déclaration de notre `sanitize_callback` ;
+- Mettre à jour l'option en base et sauvegarder les inputs.
 
-Voilà, un aperçu de la Settings API.
+Voilà, un *aperçu* de la Settings API.
 
-Comme vous pouvez le voir c'est assez puissant mais c'est hyper verbeux et c'est facile de se perdre car elle est pas si intuitive que ça. Je recommande donc après l'avoir fait une fois de manière vanilla de s'écrire un petit plugin ou une petite fonction utils pour nous aider à préparer tout ça de manière beaucoup plus simple et efficace.
+Comme vous pouvez le voir c'est assez puissant mais* c'est hyper verbeux et c'est facile de se perdre car elle est pas si intuitive que ça*. 
+
+Je recommande donc après l'avoir fait une fois de manière *vanilla* de s'écrire un petit plugin ou une petite fonction *utils* pour aider à préparer tout ça de manière beaucoup plus simple et efficace.
 
 
-## Plugins recommandés
+## Quelques plugins recommandés
 
 - [W3 Total Cache](https://www.boldgrid.com/w3-total-cache/) : permet de mettre en cache les pages générés par Wordpress. Crée un dossier wp-content/cache et y stocke du html static généré par les requetes précédentes. La prochaine fois qu'une page est appelée, au lieu d'executer la loop et de faire des requetes a la base, wordpress sert la page static déjà générée. Ameliore le SEO, Lazy Image etc...
-- [BPS Security](https://forum.ait-pro.com/read-me-first/) : sécurité de Wordpress (alternative solide à Wordfence)
-- ACF, la base pour manipuler les post metas
+- [WordFence](https://www.wordfence.com/)
+- [ACF](https://www.advancedcustomfields.com/), la base pour manipuler les post metas. Ne pas hésiter à passer sur la version PRO au besoin, elle vaut le coup.
 
 ## Optimiser Wordpress (scalability et performances)
 
-- hebergeur adapté
-- mettre en place une mise en cache
-- ne pas uploader vidéos/audio sur le site. Mettre sur youtube, soundcloud et utiliser le lien plutot. Ca augmente la taille des backups, ca coute cher en bande passante
-- reduire les appels à la db (mieux vaut remonter plus d'infos en une fois que une info puis une info puis une info)
-- limite le nb de revisions de posts. Dans le `wp-config.php` : `define( 'WP_POST_REVISIONS', 3 );`
-- disable hotlinking and leaching of your content
+- Hebergeur adapté
+- Mettre en place une mise en cache
+- Ne pas uploader vidéos/audio sur le site. Mettre sur youtube, soundcloud et utiliser le lien plutot. Ca augmente la taille des backups, ca coute cher en bande passante
+- Reduire les appels à la db (mieux vaut remonter plus d'infos en une fois que une info puis une info puis une info)
+- Limite le nb de revisions de posts. Dans le `wp-config.php` : `define( 'WP_POST_REVISIONS', 3 );`
+- Disable hotlinking and leaching of your content
 ~~~.htaccess
 #disable hotlinking of images with forbidden or custom image option
 RewriteEngine on
@@ -1140,13 +1165,13 @@ RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?{domaine} [NC]
 RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?google.com [NC]
 RewriteRule \.(jpg|jpeg|png|gif)$ – [NC,F,L] 
 ~~~
-- limiter la taille des postes/pages
-- afficher l'excerpt plutot que tout le post dans les listings
-- reduire nb de plugins
-- au lieu de link vers des CDN (font, icons, js lib) les mettre directement sur le site
-- optimisez les images pour le web (compression, taille)
-- lazy loading
-- configurer PHP via le `php.ini`, desactiver les extensions inutiles pour wordpress
+- Limiter la taille des postes/pages
+- Afficher l'excerpt plutot que tout le post dans les listings
+- Reduire le nombre de plugins
+- Au lieu de link vers des CDN (font, icons, js lib) les mettre directement sur le site
+- Optimisez les images pour le web (compression, taille)
+- Utiliser le lazy loading
+- Configurer PHP via le `php.ini`, desactiver les extensions inutiles pour wordpress
 ~~~php.ini
 ;security
 expose_php = Off
@@ -1167,29 +1192,21 @@ opcache.validate_timestamps=0
 opcache.revalidate_freq=0
 opcache.fast_shutdown=1
 ~~~
-- mettre la table de `wp_comments` en InnoDB (adapté pour lecture de grands volumes) si MySql ou utiliser MariaDB
+
 ## Ressources
 
 ### Doc officielle wordpress.org
 
 Très bien faite, mais peut parfois demander un peu d'experience pour s'y retrouver 
 
-- [Codex](https://codex.wordpress.org/)
+- [Developer Resources](https://developer.wordpress.org/), point d'entrée de la documentation officielle
 - [Wordpress hierarchy](https://developer.wordpress.org/themes/basics/template-hierarchy/)
 - [Wordpress coding standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/)
-- [Template tags](https://codex.wordpress.org/Template_Tags)
 - [Using Permalinks](https://wordpress.org/support/article/using-permalinks/)
 - [Data Sanitization/Escaping](https://developer.wordpress.org/themes/theme-security/data-sanitization-escaping/#escaping-with-localization)
 - [Localization](https://developer.wordpress.org/apis/handbook/internationalization/localization/)
-
-
-### Hebergeurs dédiés (pour des sites en production)
-
-Ces hebergeurs spécialisés peuvent être utiles si vous êtes pro et cherchez des solutions **pour des clients prêt à payer**. Sinon ne dépensez pas votre argent inutilement et utilisez l'hebergeur le moins cher possible !
-
-- [siteground](https://www.siteground.com/wordpress-hosting.htm). Le mieux on dirait car on a pas de restrictions sur nos acces (on a un ssh) et c'est optimisé (php, plugin cache custom installé par défaut), pas trop cher
-- [bluehost](https://www.bluehost.com/wordpress/managed-hosting)
-- [liquidweb](https://www.liquidweb.com/products/managed-wordpress/)
+- [Codex](https://codex.wordpress.org/), **wiki en cours de dépréciation**
+- [Template tags](https://codex.wordpress.org/Template_Tags)
 
 ### Articles
 
@@ -1207,10 +1224,9 @@ Ces hebergeurs spécialisés peuvent être utiles si vous êtes pro et cherchez 
 
 ### Podcasts
 
-- https://phproundtable.com/episode/all-things-wordpress
-- https://podcast.htmlallthethings.com/e/the-thing-about-wordpress/
+- [HTML All The Things - Web Development, Web Design, Small Business](https://podcast.htmlallthethings.com/e/the-thing-about-wordpress/) 
 
-### Développement de thèmes
+### Starter themes
 
 - [Underscores](https://underscores.me/)
 
@@ -1219,7 +1235,7 @@ Ces hebergeurs spécialisés peuvent être utiles si vous êtes pro et cherchez 
 - [Plugingplate](https://pluginplate.com/plugin-boilerplate/) : starterpack
 - [Introduction](https://developer.wordpress.org/plugins/intro/)
 
-### Settings API Frameworks/Tools
+### Settings API : Frameworks/Plugins
 
 A vos risques et périls
 
@@ -1257,9 +1273,8 @@ A vos risques et périls
 
 - [Become a WordPress Developer: Unlocking Power With Code](https://www.udemy.com/course/become-a-wordpress-developer-php-javascript/), pas mal pour apprendre le processus de la création de thème dans son ensemble
 
-##### les bases à avancé (hyper complet)
-- [Complete WordPress Theme & Plugin Development Course [2021]](https://www.udemy.com/course/wordpress-theme-and-plugin-development-course) 
-- [WordPress REST API Complete Beginners Guide](https://www.udemy.com/course/wordpress-rest-api-course/)
-- [Gutenberg Block Development for WordPress](https://www.udemy.com/course/gutenberg-block-development-wordpress-javascript-course/)
+##### Les bases à avancé (hyper complet)
 
+- [Complete WordPress Theme & Plugin Development Course [2021]](https://www.udemy.com/course/wordpress-theme-and-plugin-development-course), thèmes classiques
+- [WordPress REST API Complete Beginners Guide](https://www.udemy.com/course/wordpress-rest-api-course/)
 
