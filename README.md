@@ -32,12 +32,12 @@ Un survol de la documentation WordPress et de quelques unes de ses API, de bonne
 		- [Taxonomy hierarchy](#taxonomy-hierarchy)
 		- [Taxonomy custom](#taxonomy-custom)
 		- [Taxonomy permaliens](#taxonomy-permaliens)
-		- [Permalinks (SEO)](#permalinks-seo)
-			- [Slug](#slug)
-			- [URL best practices](#url-best-practices)
-			- [Outils SEO Wordpress](#outils-seo-wordpress)
-		- [Pagination](#pagination)
 		- [Divers](#divers)
+	- [Permalinks (SEO)](#permalinks-seo)
+		- [Slug](#slug)
+		- [URL best practices](#url-best-practices)
+		- [Outils SEO Wordpress](#outils-seo-wordpress)
+	- [Pagination](#pagination)
 	- [Template-parts](#template-parts)
 	- [Post formats](#post-formats)
 		- [Usage](#usage)
@@ -446,54 +446,6 @@ Pour les taxonomies custom. Imaginons que l'on ait créé un CPT `projet` et une
 ~~~
 
 
-### Permalinks (SEO)
-
-Le *permalink* dans Wordpress c'est l'**URL** entière d'une ressource (incluant le protocole et le nom de domaine).
-
-Le *SEO* ou Ranking de vos contenus parmi les résulats retournés par votre navigateur est hyper important si vous voulez être trouvé. Qui va sur la 2eme page de Google résultats ? (Montrer stat)
-
-Le SEO c'est souvent de la magie noire (ça depend par exemple de code propriétaire du moteur de Google et les règles peuvent changer très vite) mais c'est *important*. Et *il y a quand même des règles* stables dans le temps.
-
-Essayer de prévoir le SEO `avant` de commencer le développement ou la mise en prod de votre site. Cela vous aidera a la structuration de vos pages. Le faire après peut devenir vite compliqué voire impossible.
-
-Un site bien structuré avec taxonomie et types de posts, des url bien formées et bien nommées, des métadonnées pour les pages et du **contenu de qualité** est la base du SEO.
-
-#### Slug
-
-Les slug sont la dernière partie de l'URL (*path*), par exemple dans `example.com/about-us` le slug est `about-us`. Dans `example.com/?p=356` il n'y a pas de slug. L'URL est la ressource racine (/) modulée par un query parameter (`p`).
-
-**Toujours utiliser** `Post name`: plus compréhensible, SEO friendly
-
-- Les moteurs de recherche utilisent votre URL pour déterminer de quoi traite votre page ou votre contenu. Et s'ils trouvent que votre permalien est en lien avec le contenu ou la page, les moteurs de recherche le considèrent comme authentique et légitime, ce qui leur donne la priorité dans les résultats de recherche.
-
-- L'utilisation de mots-clés SEO dans votre URL peut vous aider à vous positionner sur vos mots-clés cibles. Google utilise l'URL comme un facteur pour classer votre page, donc si le slug de l'URL inclut vos mots-clés, Google sera plus enclin à la référencer.
-
-#### URL best practices
-
-- Utiliser le protocole HTTPS ;
-- Nom de domaine clair ;
-- *Keep it short and precise* (url concises). Le poids des derniers mots pour les *bots crawlers* est plus faible
-- Lisible pour les robots **et** pour les humains
-- Utiliser des sous-domaines : `sous-domaine.mon-domaine.com`
-- Placer des mots clefs qui décrivent le contenu de la page
-- Éviter de mettre une année dans l'URL
-- Éviter la duplication d'URL sur votre site
-- Le meilleur moment pour modifier un *permalien* est **lorsque vous créez initialement le contenu du post**, **avant que le post ne soit publié**. Pourquoi ? Si vous changez le *slug* d’un post après sa publication, attention : vous modifiez également l’URL du post, ce qui peut entraîner une page 404. **Tous les liens partagés en ligne utilisant l’ancienne URL ne fonctionneront plus et devront être redirigés vers la nouvelle URL**. En personnalisant le slug de votre post avant de publier le contenu, vous aurez un permalien optimisé dès que vous appuierez sur le bouton *Publier*;
-- Structure d'URL cohérente et uniforme sur tout le site 
-
-
-#### Outils SEO Wordpress
-
- - [Yoast](https://yoast.com/), un des plugins les plus installés et maintenu de l'écosystème de Wordpress. Gratuit possible, *user friendly* pour vos administrateur·ices de contenus (clients). Ne pas hésiter à l'installer.
- - [SEOKey](https://www.seo-key.fr/), plugin français de SEO réputé pour sa qualité.
-
-
-### Pagination
-
-- [`paginate_links()`](https://developer.wordpress.org/reference/functions/paginate_links/) : on a la main sur le nombre de pages de résultats et le formattage du markup de balisation
-- le nombre de posts par page est reglé depuis l'admin dans Settings/Reading
-- si on veut faire des choses plus contrôlés on passe par une [WP_Query](https://developer.wordpress.org/reference/classes/wp_query/)
-
 ### Divers
 
 - `hierarchical` : 
@@ -510,6 +462,56 @@ $args = array(
 	);
 register_taxonomy( 'action', array( 'ma_taxonomie' ), $args );
 ~~~
+
+
+## Permalinks (SEO)
+
+Le *permalink* dans Wordpress c'est l'**URL** entière d'une ressource (incluant le protocole et le nom de domaine).
+
+Le *SEO* ou Ranking de vos contenus parmi les résulats retournés par votre navigateur est hyper important si vous voulez être trouvé. Qui va sur la 2eme page de Google résultats ? (Montrer stat)
+
+Le SEO c'est souvent de la magie noire (ça depend par exemple de code propriétaire du moteur de Google et les règles peuvent changer très vite) mais c'est *important*. Et *il y a quand même des règles* stables dans le temps.
+
+Essayer de prévoir le SEO `avant` de commencer le développement ou la mise en prod de votre site. Cela vous aidera a la structuration de vos pages. Le faire après peut devenir vite compliqué voire impossible.
+
+Un site bien structuré avec taxonomie et types de posts, des url bien formées et bien nommées, des métadonnées pour les pages et du **contenu de qualité** est la base du SEO.
+
+### Slug
+
+Les slug sont la dernière partie de l'URL (*path*), par exemple dans `example.com/about-us` le slug est `about-us`. Dans `example.com/?p=356` il n'y a pas de slug. L'URL est la ressource racine (/) modulée par un query parameter (`p`).
+
+**Toujours utiliser** `Post name`: plus compréhensible, SEO friendly
+
+- Les moteurs de recherche utilisent votre URL pour déterminer de quoi traite votre page ou votre contenu. Et s'ils trouvent que votre permalien est en lien avec le contenu ou la page, les moteurs de recherche le considèrent comme authentique et légitime, ce qui leur donne la priorité dans les résultats de recherche.
+
+- L'utilisation de mots-clés SEO dans votre URL peut vous aider à vous positionner sur vos mots-clés cibles. Google utilise l'URL comme un facteur pour classer votre page, donc si le slug de l'URL inclut vos mots-clés, Google sera plus enclin à la référencer.
+
+### URL best practices
+
+- Utiliser le protocole HTTPS ;
+- Nom de domaine clair ;
+- *Keep it short and precise* (url concises). Le poids des derniers mots pour les *bots crawlers* est plus faible
+- Lisible pour les robots **et** pour les humains
+- Utiliser des sous-domaines : `sous-domaine.mon-domaine.com`
+- Placer des mots clefs qui décrivent le contenu de la page
+- Éviter de mettre une année dans l'URL
+- Éviter la duplication d'URL sur votre site
+- Le meilleur moment pour modifier un *permalien* est **lorsque vous créez initialement le contenu du post**, **avant que le post ne soit publié**. Pourquoi ? Si vous changez le *slug* d’un post après sa publication, attention : vous modifiez également l’URL du post, ce qui peut entraîner une page 404. **Tous les liens partagés en ligne utilisant l’ancienne URL ne fonctionneront plus et devront être redirigés vers la nouvelle URL**. En personnalisant le slug de votre post avant de publier le contenu, vous aurez un permalien optimisé dès que vous appuierez sur le bouton *Publier*;
+- Structure d'URL cohérente et uniforme sur tout le site 
+
+
+### Outils SEO Wordpress
+
+ - [Yoast](https://yoast.com/), un des plugins les plus installés et maintenu de l'écosystème de Wordpress. Gratuit possible, *user friendly* pour vos administrateur·ices de contenus (clients). Ne pas hésiter à l'installer.
+ - [SEOKey](https://www.seo-key.fr/), plugin français de SEO réputé pour sa qualité.
+
+
+## Pagination
+
+- [`paginate_links()`](https://developer.wordpress.org/reference/functions/paginate_links/) : on a la main sur le nombre de pages de résultats et le formattage du markup de balisation
+- le nombre de posts par page est reglé depuis l'admin dans Settings/Reading
+- si on veut faire des choses plus contrôlés on passe par une [WP_Query](https://developer.wordpress.org/reference/classes/wp_query/)
+
 
 ## Template-parts
 
